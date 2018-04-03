@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">WannaEatApp</string>
+    <!--Pantalla home-->
+    <string name="complete_address_label">Introduce su dirección completa</string>
+    <string name="logo_description">logo de wannaeat</string>
+    <string name="menu_icon_description">icono de menú</string>
+    <string name="input_with_rounded_border">Corner Round</string>
+    <string name="search_restaurants_label">Buscar restaurantes</string>
 </resources>
