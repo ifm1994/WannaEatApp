@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar android:id="@+id/transparent_toolbar"
+<android.support.v7.widget.Toolbar android:id="@+id/white_toolbar_with_orange_border"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
-    android:background="@android:color/transparent"
+    android:background="@drawable/thick_orange_border_bottom"
     app:title=""
+    app:titleTextColor="@color/orange"
     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" />

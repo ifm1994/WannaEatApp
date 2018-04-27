@@ -11,9 +11,11 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".Model.ShoppingCart"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -26,7 +28,9 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".LoadingAppActivity"
+            android:name=".Activities.LoadingAppActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,24 +39,42 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HomeActivity"
+            android:name=".Activities.HomeActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".RestaurantsActivity"
+            android:name=".Activities.RestaurantsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ifmfo.wannaeatapp.HomeActivity" />
+                android:value="com.example.ifmfo.wannaeatapp.Activities.HomeActivity" />
             />
         </activity>
         <activity
-            android:name=".RestaurantActivity"
+            android:name=".Activities.RestaurantActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/lightorange">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ifmfo.wannaeatapp.Activities.RestaurantsActivity" />
+            />
+            >
+        </activity>
+        <activity
+            android:name=".Activities.ProductsPerCategoryActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ifmfo.wannaeatapp.RestaurantsActivity" />
+                android:value="com.example.ifmfo.wannaeatapp.Activities.RestaurantActivity" />
             />
-        ></activity>
+        </activity>
+        <activity android:name=".Activities.PreviewBookingActivity"></activity>
     </application>
 
 </manifest>

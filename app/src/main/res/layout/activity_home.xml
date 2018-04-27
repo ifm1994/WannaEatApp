@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradiente_inicial"
-    tools:context="com.example.ifmfo.wannaeatapp.LoadingAppActivity">
+    tools:context="com.example.ifmfo.wannaeatapp.Activities.LoadingAppActivity">
 
     <ImageButton
         android:id="@+id/menu_button"

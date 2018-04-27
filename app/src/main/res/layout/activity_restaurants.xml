@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    tools:context=".RestaurantsActivity">
+    tools:context=".Activities.RestaurantsActivity">
 
-    <include layout="@layout/toolbar" />
+    <include layout="@layout/orange_toolbar" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@drawable/border_bottom">
+        android:background="@drawable/thin_orange_border_bottom">
 
         <TextView
             android:id="@+id/kind_of_food_selected"

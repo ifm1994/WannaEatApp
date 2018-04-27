@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/shopping_basket_item"
+        app:actionLayout='@layout/shopping_cart_indicator'
+        android:title="shopping cart icon"
+        app:showAsAction="always" />
+</menu>
