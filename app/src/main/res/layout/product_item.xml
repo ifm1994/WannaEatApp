@@ -67,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:background="@drawable/with_orange_border"
+        android:background="@drawable/with_squared_orange_border"
         android:orientation="horizontal"
         android:padding="5dp">
 

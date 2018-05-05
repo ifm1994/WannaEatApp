@@ -9,9 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.ifmfo.wannaeatapp.Activities.RestaurantActivity;
 import com.example.ifmfo.wannaeatapp.Model.Product;
-import com.example.ifmfo.wannaeatapp.Model.ShoppingCart;
+import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 
 import java.util.List;
 
@@ -19,12 +18,12 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardViewHold
 
     private Context context;
     List<Product> products;
-    final ShoppingCart shoppingCart;
+    final GlobalResources globalResources;
 
     public ProductCardAdapter(Context context, List<Product> products) {
         this.context = context;
         this.products = products;
-        this.shoppingCart = ShoppingCart.getInstance();
+        this.globalResources = GlobalResources.getInstance();
     }
 
     @NonNull
@@ -34,22 +33,23 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardViewHold
         return new ProductCardViewHolder(vista, context);
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     @Override
     public void onBindViewHolder(@NonNull ProductCardViewHolder holder, int position) {
         holder.productName.setText(products.get(position).getName());
         holder.productDescription.setText(products.get(position).getDescription());
-        holder.productPrice.setText( String.valueOf(products.get(position).getPrice()) + "€");
+        holder.productPrice.setText( String.format("%.2f", products.get(position).getPrice() ) + "€");
         holder.currentProduct = products.get(position);
-        int amountOfProduct = shoppingCart.getAmountOfAProduct(holder.currentProduct);
+        int amountOfProduct = globalResources.shopping_basket_getAmountOfAProduct(holder.currentProduct);
+
         if(amountOfProduct != 0){
             holder.productAmountContainer.setVisibility(View.VISIBLE);
             holder.productAmountSelected.setText(Integer.toString(amountOfProduct));
-            holder.productTotalPrice.setText( Double.toString(holder.currentProduct.getPrice() * amountOfProduct) + "€");
+            holder.productTotalPrice.setText( String.format("%.2f", holder.currentProduct.getPrice() * amountOfProduct) + "€");
         }else{
             holder.productAmountContainer.setVisibility(View.GONE);
             holder.productAmountSelected.setText("0");
-            holder.productTotalPrice.setText("0.0€");
+            holder.productTotalPrice.setText("0.00€");
         }
     }
 

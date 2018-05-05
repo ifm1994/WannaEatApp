@@ -62,7 +62,8 @@
                                 android:paddingTop="3dp"
                                 android:textColor="@color/white"
                                 android:textSize="38sp"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                tools:ignore="RtlHardcoded" />
 
                             <TextView
                                 android:id="@+id/textView"

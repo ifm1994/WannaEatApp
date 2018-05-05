@@ -53,7 +53,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == 1 && resultCode == RESULT_OK && data.getExtras() != null){
+        if(requestCode == 1 && data.getExtras() != null){
             Log.i("info.", "a la vuelta reescribo " + data.getExtras().getString("direccionBuscada", ""));
             inputDireccion.setText(data.getExtras().getString("direccionBuscada", ""));
         }

@@ -6,6 +6,7 @@
     android:layout_width="wrap_content"
     android:orientation="horizontal"
     android:background="@color/white"
+    android:id="@+id/basket_icon"
     android:layout_marginEnd="30dp"
     android:padding="5dp"
     android:layout_height="wrap_content"

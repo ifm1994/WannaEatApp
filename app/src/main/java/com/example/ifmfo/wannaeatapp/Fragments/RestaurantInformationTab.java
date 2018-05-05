@@ -35,6 +35,11 @@ public class RestaurantInformationTab extends Fragment implements OnMapReadyCall
     GoogleMap mGoogleMap;
     MapView restaurantMap;
     View fragmentView;
+    TextView restaurantOpenningHours;
+    TextView restaurantFoodType;
+    TextView restaurantDescription;
+    TextView restaurantContact;
+    TextView restaurantUbication;
 
 
     @SuppressLint("ValidFragment")
@@ -48,12 +53,7 @@ public class RestaurantInformationTab extends Fragment implements OnMapReadyCall
 //        setHasOptionsMenu(true);
         fragmentView = inflater.inflate(R.layout.fragment_information_tab,container, false);
 
-        //Rellenar los datos del restaurante
-        TextView restaurantOpenningHours = fragmentView.findViewById(R.id.single_restaurant_openning_hour_value);
-        TextView restaurantFoodType = fragmentView.findViewById(R.id.single_restaurant_food_type_value);
-        TextView restaurantDescription = fragmentView.findViewById(R.id.single_restaurant_description);
-        TextView restaurantContact = fragmentView.findViewById(R.id.single_restaurant_contact);
-        TextView restaurantUbication = fragmentView.findViewById(R.id.ubication_card_header);
+        initUI();
 
         restaurantFoodType.setText(thisRestaurant.getKind_of_food());
         restaurantOpenningHours.setText(thisRestaurant.getOpening_hours());
@@ -62,6 +62,14 @@ public class RestaurantInformationTab extends Fragment implements OnMapReadyCall
         restaurantUbication.setText("Ubicación: " + thisRestaurant.getAddress());
 
         return fragmentView;
+    }
+
+    private void initUI() {
+        restaurantOpenningHours = fragmentView.findViewById(R.id.single_restaurant_openning_hour_value);
+        restaurantFoodType = fragmentView.findViewById(R.id.single_restaurant_food_type_value);
+        restaurantDescription = fragmentView.findViewById(R.id.single_restaurant_description);
+        restaurantContact = fragmentView.findViewById(R.id.single_restaurant_contact);
+        restaurantUbication = fragmentView.findViewById(R.id.ubication_card_header);
     }
 
     @Override

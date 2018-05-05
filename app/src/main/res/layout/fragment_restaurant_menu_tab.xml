@@ -1,52 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v4.widget.NestedScrollView
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    tools:context=".Fragments.RestaurantInformationTab">
-
-    <android.support.v4.widget.NestedScrollView
+    tools:context=".Fragments.RestaurantInformationTab"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/categoriesContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:id="@+id/categoriesContainer"
+        android:layout_height="match_parent"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/category_item_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:orientation="vertical">
+            android:background="@color/white">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/category_item_container"
-                android:layout_width="match_parent"
-                android:background="@color/white"
-                android:layout_height="match_parent" >
+        </android.support.v7.widget.RecyclerView>
 
-            </android.support.v7.widget.RecyclerView>
-
-        </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
-
-
-</LinearLayout>
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>
 
 <!--
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:drawableEnd="@drawable/ic_action_search"
-        android:drawableRight="@drawable/ic_action_search"
-        android:drawableTint="@color/orange"
-        tools:ignore="UnusedAttribute"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:textSize="16sp"
-        android:hint="Buscar en el restaurants_searcher_menu..."
-        android:textColorHint="@color/gray"/>
+<EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:drawableEnd="@drawable/ic_search_xs_icon"
+            android:drawableRight="@drawable/ic_search_xs_icon"
+            android:drawableTint="@color/orange"
+            tools:ignore="UnusedAttribute"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textSize="16sp"
+            android:hint="Buscar en el restaurante..."
+            android:textColorHint="@color/gray"/>
 
 -->

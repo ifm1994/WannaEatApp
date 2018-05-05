@@ -96,9 +96,6 @@ public class LoadingAppActivity extends AppCompatActivity {
             loc.getLatitude();
             loc.getLongitude();
 
-            String Text = "Mi ubicacion actual es: " + "\n Lat = "
-                    + loc.getLatitude() + "\n Long = " + loc.getLongitude();
-//            mensaje1.setText(Text);
             setLocation(loc);
         }
 
@@ -163,3 +160,10 @@ public class LoadingAppActivity extends AppCompatActivity {
         }
     }
 }
+
+/*
+
+final float scale = getContext().getResources().getDisplayMetrics().density;
+int pixels = (int) (200 * scale + 0.5f);
+
+ */

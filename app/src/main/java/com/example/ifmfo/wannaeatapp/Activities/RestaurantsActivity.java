@@ -25,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 import com.example.ifmfo.wannaeatapp.RestaurantCardAdapter;
 import com.example.ifmfo.wannaeatapp.Model.Restaurant;
 import com.example.ifmfo.wannaeatapp.R;
@@ -48,11 +49,11 @@ public class RestaurantsActivity extends AppCompatActivity{
     private Double latitudIntroducida;
     private Double longitudIntroducida;
     SearchFilter filterSelected;
-    String direccionIntroducida;
     RecyclerView restaurantCardContainer;
     Location currentLocation;
     Geocoder geocoder;
     List <Restaurant> allRestaurants = new ArrayList<>();
+    static final GlobalResources globalResources = GlobalResources.getInstance();
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -72,9 +73,10 @@ public class RestaurantsActivity extends AppCompatActivity{
         geocoder = new Geocoder(this);
 
         if(getIntent().getExtras() != null){
-            direccionIntroducida = getIntent().getExtras().getString("direccion", "");
+            globalResources.setSession_addressEntered(getIntent().getExtras().getString("direccion", ""));
+
             try {
-                calcularDatosDeDireccionIntroducida(direccionIntroducida);
+                calcularDatosDeDireccionIntroducida(globalResources.getSession_addressEntered());
                 //Cambio el titulo a la orange_toolbar
                 getSupportActionBar().setTitle(localityAddress);
             } catch (IOException e) {
@@ -94,6 +96,7 @@ public class RestaurantsActivity extends AppCompatActivity{
         longitudIntroducida = address.get(0).getLongitude();
         currentLocation.setLongitude(longitudIntroducida);
         currentLocation.setLatitude(latitudIntroducida);
+        Log.i("info.", localityAddress);
     }
 
     private void obtenerTodosLosRestaurantes() {
@@ -143,7 +146,7 @@ public class RestaurantsActivity extends AppCompatActivity{
 
     private void filtrarRestaurantesCercanos(List <Restaurant> restaurants, SearchFilter filterSelected) throws IOException {
         List<Restaurant> listOfRestaurantsFiltered = new ArrayList<>();
-        List<Address> currentAddress = geocoder.getFromLocationName(direccionIntroducida, 1);
+        List<Address> currentAddress = geocoder.getFromLocationName(globalResources.getSession_addressEntered(), 1);
         for(Restaurant restaurant: restaurants){
             //Filtro por misma localidad
             if(filterSelected == SearchFilter.LOCALITY){
@@ -173,24 +176,23 @@ public class RestaurantsActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent();
-        intent.putExtra("direccionBuscada", direccionIntroducida);
-        setResult(RESULT_OK, intent);
-        finish();
+        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+        intent.putExtra("direccionAutomatica", globalResources.getSession_addressEntered());
+        startActivityForResult(intent, 1);
     }
 
     //METODO para darle funcionalidad a los botones de la orange_toolbar
-    @SuppressLint("ShowToast")
+    @Override
     public boolean onOptionsItemSelected(MenuItem menuItem){
+
         switch (menuItem.getItemId()){
             case android.R.id.home:
-                Intent intent = new Intent();
-                intent.putExtra("direccionBuscada", direccionIntroducida);
-                setResult(RESULT_OK, intent);
-                finish();
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                intent.putExtra("direccionAutomatica", globalResources.getSession_addressEntered());
+                startActivityForResult(intent, 1);
                 break;
             default:
-                Log.i("info.","default");
+                super.onOptionsItemSelected(menuItem);
                 break;
         }
         return true;
@@ -206,7 +208,7 @@ public class RestaurantsActivity extends AppCompatActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == 1 && resultCode == RESULT_OK && data.getExtras() != null){
+        if(requestCode == 1 && data.getExtras() != null){
             getSupportActionBar().setTitle(localityAddress);
             obtenerTodosLosRestaurantes();
         }

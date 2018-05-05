@@ -2,14 +2,9 @@ package com.example.ifmfo.wannaeatapp;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,8 +12,7 @@ import android.widget.Toast;
 import com.example.ifmfo.wannaeatapp.Activities.ProductsPerCategoryActivity;
 import com.example.ifmfo.wannaeatapp.Activities.RestaurantActivity;
 import com.example.ifmfo.wannaeatapp.Model.Product;
-import com.example.ifmfo.wannaeatapp.Model.Restaurant;
-import com.example.ifmfo.wannaeatapp.Model.ShoppingCart;
+import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 
 public class ProductCardViewHolder extends RecyclerView.ViewHolder{
 
@@ -29,8 +23,6 @@ public class ProductCardViewHolder extends RecyclerView.ViewHolder{
     TextView productAmountSelected;
     TextView productTotalPrice;
     Product currentProduct;
-    private TextView shoppingCartTotalAmount;
-    private TextView shoppingCartTotalPrice;
     RelativeLayout productAmountContainer;
 
 
@@ -46,14 +38,12 @@ public class ProductCardViewHolder extends RecyclerView.ViewHolder{
         productAmountContainer = itemView.findViewById(R.id.product_amount_container);
         ImageButton addButton = itemView.findViewById(R.id.addProductButton);
         ImageButton removeButton = itemView.findViewById(R.id.removeProductButton);
-        final ShoppingCart shoppingCart = ShoppingCart.getInstance();
-        addButton.setOnClickListener(v -> {
-            if(shoppingCart.canAddProduct(currentProduct)){
-                shoppingCart.addProduct(currentProduct);
-                productAmountContainer.setVisibility(View.VISIBLE);
-                productAmountSelected.setText(Integer.toString(shoppingCart.getAmountOfAProduct(currentProduct)));
-                productTotalPrice.setText(String.format("%.2f",shoppingCart.getTotalPriceOfAProduct(currentProduct)) + "€");
 
+        final GlobalResources globalResources = GlobalResources.getInstance();
+        addButton.setOnClickListener(v -> {
+            if(globalResources.shopping_basket_canAddProduct(currentProduct)){
+                globalResources.shopping_basket_addProduct(currentProduct);
+                ProductsPerCategoryActivity.filtrarProductosPorCategoria(ProductsPerCategoryActivity.getThisCategory());
                 RestaurantActivity.updateBasketIndicator();
                 ProductsPerCategoryActivity.updateBasketIndicator();
             }else{
@@ -62,14 +52,8 @@ public class ProductCardViewHolder extends RecyclerView.ViewHolder{
         });
 
         removeButton.setOnClickListener(v -> {
-            shoppingCart.removeProduct(currentProduct);
-            productAmountSelected.setText(Integer.toString(shoppingCart.getAmountOfAProduct(currentProduct)));
-            productTotalPrice.setText(String.format("%.2f",shoppingCart.getTotalPriceOfAProduct(currentProduct)) + "€");
-
-            if(shoppingCart.getAmountOfAProduct(currentProduct) == 0){
-                productAmountContainer.setVisibility(View.GONE);
-            }
-
+            globalResources.shopping_basket_removeProduct(currentProduct);
+            ProductsPerCategoryActivity.filtrarProductosPorCategoria(ProductsPerCategoryActivity.getThisCategory());
             RestaurantActivity.updateBasketIndicator();
             ProductsPerCategoryActivity.updateBasketIndicator();
         });

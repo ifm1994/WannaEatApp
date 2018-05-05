@@ -71,7 +71,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/D:/Programas%20instalados/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/toggle/ic_star_border_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/D:/Programas%20instalados/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_search_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -82,11 +82,11 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="ea5b11" />
-                            <entry key="height" value="32" />
-                            <entry key="outputName" value="ic_big_empty_star" />
+                            <entry key="height" value="16" />
+                            <entry key="outputName" value="ic_search_xs_icon" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\ifmfo\Desktop\shopping_basket_icon.svg" />
-                            <entry key="width" value="32" />
+                            <entry key="sourceFile" value="C:\Users\ifmfo\Desktop\empty_basket.svg" />
+                            <entry key="width" value="16" />
                           </map>
                         </option>
                       </PersistentState>

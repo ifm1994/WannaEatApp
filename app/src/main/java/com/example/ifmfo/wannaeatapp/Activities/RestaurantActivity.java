@@ -9,7 +9,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,17 +17,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.ifmfo.wannaeatapp.Model.Restaurant;
-import com.example.ifmfo.wannaeatapp.Model.ShoppingCart;
+import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 import com.example.ifmfo.wannaeatapp.R;
 import com.example.ifmfo.wannaeatapp.RestaurantTabAdapter;
 import com.squareup.picasso.Picasso;
 
-import java.text.DecimalFormat;
 import java.util.Objects;
 
 public class RestaurantActivity extends AppCompatActivity {
 
-    Restaurant thisRestaurant;
+    static Restaurant thisRestaurant;
     TextView restaurantName;
     ImageView restaurantImage;
     Toolbar toolbar;
@@ -38,7 +36,7 @@ public class RestaurantActivity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     static TextView basketPrice, basketAmount;
     private static Menu menu;
-    static final ShoppingCart shoppingCart = ShoppingCart.getInstance();
+    static final GlobalResources globalResources = GlobalResources.getInstance();
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -102,30 +100,32 @@ public class RestaurantActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == 1 && resultCode == RESULT_OK && data.getExtras() != null){
+        if(requestCode == 1 && data.getExtras() != null){
             initializeActivity();
+            updateBasketIndicator();
         }
     }
 
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent();
-        setResult(RESULT_OK, intent);
-        finish();
+        Intent intent = new Intent(getApplicationContext(), RestaurantsActivity.class);
+        intent.putExtra("direccion", globalResources.getSession_addressEntered());
+        startActivityForResult(intent, 1);
     }
 
     //METODO para darle funcionalidad a los botones de la orange_toolbar
-    @SuppressLint("ShowToast")
+    @Override
     public boolean onOptionsItemSelected(MenuItem menuItem){
+
         switch (menuItem.getItemId()){
             case android.R.id.home:
-                Intent intent = new Intent();
-                setResult(RESULT_OK, intent);
-                finish();
+                Intent intent = new Intent(getApplicationContext(), RestaurantsActivity.class);
+                intent.putExtra("direccion", globalResources.getSession_addressEntered());
+                startActivityForResult(intent, 1);
                 break;
             default:
-                Log.i("info.","default");
+                super.onOptionsItemSelected(menuItem);
                 break;
         }
         return true;
@@ -133,20 +133,40 @@ public class RestaurantActivity extends AppCompatActivity {
 
 
     //METODO para crear un toolbar personalizado
+    @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.shopping_basket_menu, menu);
         RestaurantActivity.menu = menu;
         LinearLayout basketItem = (LinearLayout) menu.findItem(R.id.shopping_basket_item).getActionView();
-        basketPrice = (TextView) basketItem.findViewById(R.id.basket_price);
-        basketAmount= (TextView) basketItem.findViewById(R.id.basket_amount);
+        basketPrice = basketItem.findViewById(R.id.basket_price);
+        basketAmount= basketItem.findViewById(R.id.basket_amount);
         updateBasketIndicator();
+
+        MenuItem basketIcon = menu.findItem(R.id.shopping_basket_item);
+        if(basketIcon != null){
+            basketIcon.getActionView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(globalResources.shopping_basket_getNumberOfProductsAdded() > 0){
+                        Intent goFullBookingActivity = new Intent(RestaurantActivity.this, FullShoppingBasketActivity.class);
+                        goFullBookingActivity.putExtra("restaurant", thisRestaurant);
+                        startActivityForResult(goFullBookingActivity,1);
+                    }else{
+                        Intent goEmptyBookingActivity = new Intent(RestaurantActivity.this, EmptyShoppingBasketActivity.class);
+                        goEmptyBookingActivity.putExtra("restaurant", thisRestaurant);
+                        startActivityForResult(goEmptyBookingActivity,1);
+                    }
+                }
+            });
+        }
+
         return true;
     }
 
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     public static void updateBasketIndicator(){
-        getBasketAmount().setText(Integer.toString(shoppingCart.getNumberOfProductsAdded()));
-        getBasketPrice().setText(String.format("%.2f", shoppingCart.getTotalPrice()) + "€");
+        getBasketAmount().setText(Integer.toString(globalResources.shopping_basket_getNumberOfProductsAdded()));
+        getBasketPrice().setText(String.format("%.2f", globalResources.shopping_basket_getTotalPrice()) + "€");
     }
 
     public static TextView getBasketPrice() {
@@ -155,5 +175,9 @@ public class RestaurantActivity extends AppCompatActivity {
 
     public static TextView getBasketAmount() {
         return basketAmount;
+    }
+
+    public static Restaurant getCurrentRestaurant() {
+        return thisRestaurant;
     }
 }
