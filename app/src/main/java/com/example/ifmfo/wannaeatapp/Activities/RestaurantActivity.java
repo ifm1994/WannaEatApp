@@ -53,16 +53,11 @@ public class RestaurantActivity extends AppCompatActivity {
         initializeActivity();
 
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null){
-            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-            toolbar.setNavigationIcon(R.drawable.ic_action_orange_back);
-        }
-    }
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationIcon(R.drawable.ic_action_orange_back);
 
-    public static Menu getMenu() {
-        return menu;
     }
 
     public void initializeActivity(){

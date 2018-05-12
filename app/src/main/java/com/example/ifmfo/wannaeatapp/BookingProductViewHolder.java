@@ -57,6 +57,7 @@ public class BookingProductViewHolder extends  RecyclerView.ViewHolder{
             if(globalResources.shopping_basket_getNumberOfProductsAdded() == 0){
                 Intent goEmpty = new Intent( context, EmptyShoppingBasketActivity.class );
                 goEmpty.putExtra("restaurant", RestaurantActivity.getCurrentRestaurant());
+                FullShoppingBasketActivity.actualizarPrecioTotal();
                 view.getContext().startActivity(goEmpty);
             }else{
                 FullShoppingBasketActivity.dibujarProductosDeLaReserva();

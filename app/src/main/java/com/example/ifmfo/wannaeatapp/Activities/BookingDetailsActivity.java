@@ -11,50 +11,83 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.ifmfo.wannaeatapp.Model.CommensalPerHour;
+import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 import com.example.ifmfo.wannaeatapp.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
 
 import static com.example.ifmfo.wannaeatapp.R.drawable.ic_action_orange_back;
 
 public class BookingDetailsActivity extends AppCompatActivity {
 
-    Spinner bookingHourDesplegable;
+    static final GlobalResources globalResources = GlobalResources.getInstance();
+    Spinner bookingHoursDesplegable;
+    Spinner bookingMinutesDesplegable;
     ImageButton addCommensal;
     ImageButton removeCommensal;
-    private int amountOfCommensal;
+    private int amountOfCommensals;
     Boolean bookingForToday;
     RelativeLayout todayButton;
     RelativeLayout otherDayButton;
     CardView continueBooking;
     Toolbar toolbar;
-    TextView numberOfCommensal;
+    TextView numberOfCommensals;
+    EditText userComment;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_details);
+
+        initUI();
+        setupToolbar();
+
+        obtenerHorasDisponiblesDelRestaurante();
+        actualizarColorDeBotonesDelDia();
+        bindEvents();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void initUI() {
         toolbar = findViewById(R.id.white_toolbar_with_orange_border);
-        bookingHourDesplegable = findViewById(R.id.booking_hour_spinner);
+        bookingHoursDesplegable = findViewById(R.id.booking_hours_spinner);
+        bookingMinutesDesplegable = findViewById(R.id.booking_minutes_spinner);
         addCommensal = findViewById(R.id.addCommensal);
         removeCommensal = findViewById(R.id.removeCommensal);
-        numberOfCommensal = findViewById(R.id.booking_commensal_number);
-        amountOfCommensal = 0;
+        numberOfCommensals = findViewById(R.id.booking_commensal_number);
+        amountOfCommensals = 0;
         todayButton = findViewById(R.id.day_switch_button_1);
         otherDayButton = findViewById(R.id.day_switch_button_2);
         bookingForToday = true;
         continueBooking = findViewById(R.id.continueBookingButon);
+        numberOfCommensals.setText(Integer.toString(amountOfCommensals));
+        userComment = findViewById(R.id.booking_user_comment);
+    }
 
-        numberOfCommensal.setText(Integer.toString(amountOfCommensal));
-
+    private void setupToolbar() {
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null){
             Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -62,45 +95,60 @@ public class BookingDetailsActivity extends AppCompatActivity {
             toolbar.setNavigationIcon(ic_action_orange_back);
             getSupportActionBar().setTitle("Pedido");
         }
-
-        rellenarDesplegableHoraReserva();
-        actualizarColorDeBotonesDelDia();
-
-        bindEvents();
     }
 
+    @SuppressLint("SetTextI18n")
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void bindEvents() {
         removeCommensal.setOnClickListener(v -> {
-            if(amountOfCommensal > 0){
-                amountOfCommensal--;
-                numberOfCommensal.setText(Integer.toString(amountOfCommensal));
+            if(amountOfCommensals > 0){
+                amountOfCommensals--;
+                numberOfCommensals.setText(Integer.toString(amountOfCommensals));
             }
+            updateHoursDesplegable();
         });
 
         addCommensal.setOnClickListener(v -> {
-            if (amountOfCommensal < 20){
-                amountOfCommensal++;
-                numberOfCommensal.setText(Integer.toString(amountOfCommensal));
+            if (amountOfCommensals < 20){
+                amountOfCommensals++;
+                numberOfCommensals.setText(Integer.toString(amountOfCommensals));
             }
-        });
-
-        continueBooking.setOnClickListener(arg0 -> {
-            if(numberOfCommensal.getText().equals("0")){
-                Toast.makeText(getApplicationContext(),"Número de comensales no válido", Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(getApplicationContext(),"Número válido", Toast.LENGTH_SHORT).show();
-            }
+            updateHoursDesplegable();
         });
 
         todayButton.setOnClickListener(v -> {
             bookingForToday = true;
             actualizarColorDeBotonesDelDia();
+            updateHoursDesplegable();
         });
 
         otherDayButton.setOnClickListener(v -> {
             bookingForToday = false;
             actualizarColorDeBotonesDelDia();
+            updateHoursDesplegable();
+        });
+
+        continueBooking.setOnClickListener(arg0 -> {
+            if(numberOfCommensals.getText().equals("0")){
+                Toast.makeText(getApplicationContext(),"Número de comensales no válido", Toast.LENGTH_SHORT).show();
+            }else if(bookingHoursDesplegable.getSelectedItem() == "HH" || bookingMinutesDesplegable.getSelectedItem() == "MM"){
+                Toast.makeText(getApplicationContext(),"Debe elegir la hora deseada", Toast.LENGTH_SHORT).show();
+            }else{
+                globalResources.setBookingForToday(bookingForToday);
+                globalResources.setNumber_of_commensals(amountOfCommensals);
+                globalResources.setReservationTime(bookingHoursDesplegable.getSelectedItem().toString() + ":" + bookingMinutesDesplegable.getSelectedItem().toString());
+                globalResources.setClient_commentary(userComment.getText().toString());
+                startActivityForResult(new Intent(BookingDetailsActivity.this, PaymentBookingActivity.class),1);
+            }
+        });
+
+        bookingHoursDesplegable.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                updateMinutesDesplegable();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {}
         });
     }
 
@@ -118,11 +166,101 @@ public class BookingDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private void rellenarDesplegableHoraReserva() {
-        String [] bookingHours = {"Seleccione hora","13:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, bookingHours);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bookingHourDesplegable.setAdapter(adapter);
+    private void obtenerHorasDisponiblesDelRestaurante() {
+        if(globalResources.getCapacitiesOfRestaurant().size() == 0 || globalResources.getCapacitiesOfRestaurant().get(0).getId_restaurant() != RestaurantActivity.getCurrentRestaurant().getId()){
+            globalResources.emptyCapacitiesOfCurrentRestaurant();
+
+            RequestQueue requestQueue = Volley.newRequestQueue(BookingDetailsActivity.this);
+            String urlPeticion = "https://wannaeatservice.herokuapp.com/api/commensals_capacity_per_hour/restaurant/" + RestaurantActivity.getCurrentRestaurant().getId();
+            JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+                    Request.Method.GET,
+                    urlPeticion,
+                    null,
+                    response -> {
+                        try{
+                            // Loop through the array elements
+                            for(int i=0;i<response.length();i++){
+                                // Get current json object
+                                JSONObject cphObject = response.getJSONObject(i);
+                                // Get the current restaurant (json object) data
+                                int id = cphObject.getInt("id");
+                                int id_restaurant = cphObject.getInt("id_restaurant");
+                                String hour = cphObject.getString("hour");
+                                int commensal_capacity = cphObject.getInt("commensal_capacity");
+
+                                CommensalPerHour commensalPerHour = new CommensalPerHour(id, id_restaurant, hour, commensal_capacity);
+                                globalResources.addCapacityPerHour(commensalPerHour);
+                            }
+                            updateHoursDesplegable();
+                            updateMinutesDesplegable();
+
+                            globalResources.orderOpenHoursOfCapacities();
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    },
+                    error -> {
+                        // Do something when error occurred
+                        Toast.makeText(getApplicationContext(), "Error en la petición de capacidades por hora",Toast.LENGTH_LONG).show();
+                    }
+            );
+            requestQueue.add(jsonObjectRequest);
+        }else{
+            updateHoursDesplegable();
+            updateMinutesDesplegable();
+        }
+    }
+
+    private void updateHoursDesplegable() {
+        List<String> hours = new ArrayList<>();
+        hours.add("HH");
+
+        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        for (CommensalPerHour commensalPerHour : globalResources.getCapacitiesOfRestaurant()){
+            if(bookingForToday){
+                if(commensalPerHour.getCommensal_capacity() >= amountOfCommensals && Integer.parseInt(commensalPerHour.getHour()) > currentHour){
+                    hours.add(commensalPerHour.getHour());
+                }
+            }else{
+                hours.add(commensalPerHour.getHour());
+            }
+        }
+        String[] result = new String[hours.size()];
+        rellenarDesplegableHoras(hours.toArray(result));
+        bookingMinutesDesplegable.setSelection(0);
+    }
+
+    private void updateMinutesDesplegable(){
+        String [] bookingMinutes = {"MM","00","05","10","15","20","25","30","35","40","45","50","55"};
+        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int currenMinute = Calendar.getInstance().get(Calendar.MINUTE);
+
+        if( bookingHoursDesplegable.getSelectedItem() != "HH" && Integer.parseInt(bookingHoursDesplegable.getSelectedItem().toString()) == currentHour + 1){
+            List <String> result = new ArrayList<>();
+            result.add("MM");
+            for(int i=1; i<bookingMinutes.length; i++){
+                if(Integer.parseInt(bookingMinutes[i]) > currenMinute){
+                    result.add(bookingMinutes[i]);
+                }
+            }
+            String[] finalResult = new String[result.size()];
+            rellenarDesplegableMinutos(result.toArray(finalResult));
+        }else{
+            rellenarDesplegableMinutos(bookingMinutes);
+        }
+    }
+
+
+    private void rellenarDesplegableHoras(String [] bookingHours) {
+        ArrayAdapter<String> adapterHours = new ArrayAdapter<>(this, R.layout.spinner_item, bookingHours);
+        adapterHours.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        bookingHoursDesplegable.setAdapter(adapterHours);
+    }
+
+    private void rellenarDesplegableMinutos(String [] bookingMinutes){
+        ArrayAdapter<String> adapterMinutes = new ArrayAdapter<>(this, R.layout.spinner_item, bookingMinutes);
+        adapterMinutes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        bookingMinutesDesplegable.setAdapter(adapterMinutes);
     }
 
     @Override
@@ -130,12 +268,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
         Intent intent = new Intent();
         setResult(RESULT_OK, intent);
         finish();
-
     }
 
     //METODO para darle funcionalidad a los botones de la orange_toolbar
     public boolean onOptionsItemSelected(MenuItem menuItem){
-
         switch (menuItem.getItemId()){
             case android.R.id.home:
                 Intent intent = new Intent();
@@ -148,5 +284,4 @@ public class BookingDetailsActivity extends AppCompatActivity {
         }
         return true;
     }
-
 }

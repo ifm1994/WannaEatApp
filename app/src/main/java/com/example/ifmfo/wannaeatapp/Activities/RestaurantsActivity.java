@@ -43,6 +43,7 @@ import java.util.Objects;
 
 public class RestaurantsActivity extends AppCompatActivity{
 
+    static final GlobalResources globalResources = GlobalResources.getInstance();
     private String codigoPostalIntroducido;
     private int RangoDeCoincidencia = 1000;
     private String localityAddress;
@@ -52,8 +53,7 @@ public class RestaurantsActivity extends AppCompatActivity{
     RecyclerView restaurantCardContainer;
     Location currentLocation;
     Geocoder geocoder;
-    List <Restaurant> allRestaurants = new ArrayList<>();
-    static final GlobalResources globalResources = GlobalResources.getInstance();
+    Toolbar toolbar;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -61,16 +61,8 @@ public class RestaurantsActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurants);
 
-        currentLocation = new Location("current location");
-        filterSelected = SearchFilter.LOCALITY;
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        //Añado la orange_toolbar
-        setSupportActionBar(toolbar);
-        //Añado la flecha para atras en la orange_toolbar
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        toolbar.setNavigationIcon(R.drawable.ic_action_back);
-        geocoder = new Geocoder(this);
+        initUI();
+        setupToolbar();
 
         if(getIntent().getExtras() != null){
             globalResources.setSession_addressEntered(getIntent().getExtras().getString("direccion", ""));
@@ -83,9 +75,28 @@ public class RestaurantsActivity extends AppCompatActivity{
                 Toast.makeText(this, "La dirección no ha sido encontrada", Toast.LENGTH_SHORT).show();
             }
         }
-        obtenerTodosLosRestaurantes();
+        try {
+            obtenerTodosLosRestaurantes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+    private void initUI() {
+        currentLocation = new Location("current location");
+        filterSelected = SearchFilter.LOCALITY;
+        geocoder = new Geocoder(this);
+        toolbar = findViewById(R.id.toolbar);
+    }
+
+    private void setupToolbar() {
+        toolbar.setNavigationIcon(R.drawable.ic_action_back);
+        //Añado la orange_toolbar
+        setSupportActionBar(toolbar);
+        //Añado la flecha para atras en la orange_toolbar
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+    }
 
 
     private void calcularDatosDeDireccionIntroducida(String direccion) throws IOException {
@@ -96,51 +107,56 @@ public class RestaurantsActivity extends AppCompatActivity{
         longitudIntroducida = address.get(0).getLongitude();
         currentLocation.setLongitude(longitudIntroducida);
         currentLocation.setLatitude(latitudIntroducida);
-        Log.i("info.", localityAddress);
     }
 
-    private void obtenerTodosLosRestaurantes() {
-        RequestQueue requestQueue = Volley.newRequestQueue(RestaurantsActivity.this);
-        String urlPeticion = "https://wannaeatservice.herokuapp.com/api/restaurants";
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
-            Request.Method.GET,
-            urlPeticion,
-            null,
-                response -> {
-                    try{
-                        // Loop through the array elements
-                        for(int i=0;i<response.length();i++){
-                            // Get current json object
-                            JSONObject restaurantObject = response.getJSONObject(i);
-                            // Get the current restaurant (json object) data
-                            int id = restaurantObject.getInt("id");
-                            String name = restaurantObject.getString("name");
-                            String address = restaurantObject.getString("address");
-                            String kindOfFood = restaurantObject.getString("kind_of_food");
-                            String rating = restaurantObject.getString("rating");
-                            String imagePath = restaurantObject.getString("image_path");
-                            String openningHours = restaurantObject.getString("opening_hours");
-                            String description = restaurantObject.getString("description");
-                            String phone = restaurantObject.getString("phone");
-                            double latitude = Double.parseDouble(restaurantObject.getString("latitude"));
-                            double longitude = Double.parseDouble(restaurantObject.getString("longitude"));
+    private void obtenerTodosLosRestaurantes() throws IOException {
 
-                            Restaurant restaurant = new Restaurant(id, name, address, kindOfFood, rating, imagePath, openningHours, description, phone, latitude, longitude);
-                            allRestaurants.add(restaurant);
+        if(globalResources.getFoundRestaurnts().size() == 0){
+            globalResources.clearFoundRestaurants();
+            RequestQueue requestQueue = Volley.newRequestQueue(RestaurantsActivity.this);
+            String urlPeticion = "https://wannaeatservice.herokuapp.com/api/restaurants";
+            JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+                    Request.Method.GET,
+                    urlPeticion,
+                    null,
+                    response -> {
+                        try{
+                            // Loop through the array elements
+                            for(int i=0;i<response.length();i++){
+                                // Get current json object
+                                JSONObject restaurantObject = response.getJSONObject(i);
+                                // Get the current restaurant (json object) data
+                                int id = restaurantObject.getInt("id");
+                                String name = restaurantObject.getString("name");
+                                String address = restaurantObject.getString("address");
+                                String kindOfFood = restaurantObject.getString("kind_of_food");
+                                String rating = restaurantObject.getString("rating");
+                                String imagePath = restaurantObject.getString("image_path");
+                                String openningHours = restaurantObject.getString("opening_hours");
+                                String description = restaurantObject.getString("description");
+                                String phone = restaurantObject.getString("phone");
+                                double latitude = Double.parseDouble(restaurantObject.getString("latitude"));
+                                double longitude = Double.parseDouble(restaurantObject.getString("longitude"));
+
+                                Restaurant restaurant = new Restaurant(id, name, address, kindOfFood, rating, imagePath, openningHours, description, phone, latitude, longitude);
+                                globalResources.addFoundRestaurant(restaurant);
+                            }
+                            filtrarRestaurantesCercanos(globalResources.getFoundRestaurnts(), filterSelected);
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                        filtrarRestaurantesCercanos(allRestaurants, filterSelected);
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    },
+                    error -> {
+                        // Do something when error occurred
+                        Toast.makeText(RestaurantsActivity.this, "Error en la petición de restaurantes",Toast.LENGTH_LONG).show();
                     }
-                },
-                error -> {
-                    // Do something when error occurred
-                    Toast.makeText(RestaurantsActivity.this, "Error en la petición de restaurantes",Toast.LENGTH_LONG).show();
-                }
-        );
-        requestQueue.add(jsonObjectRequest);
+            );
+            requestQueue.add(jsonObjectRequest);
+        }else{
+            filtrarRestaurantesCercanos(globalResources.getFoundRestaurnts(), filterSelected);
+        }
 
     }
 
@@ -178,7 +194,7 @@ public class RestaurantsActivity extends AppCompatActivity{
     public void onBackPressed() {
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
         intent.putExtra("direccionAutomatica", globalResources.getSession_addressEntered());
-        startActivityForResult(intent, 1);
+        startActivityForResult(intent, 2);
     }
 
     //METODO para darle funcionalidad a los botones de la orange_toolbar
@@ -189,7 +205,7 @@ public class RestaurantsActivity extends AppCompatActivity{
             case android.R.id.home:
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                 intent.putExtra("direccionAutomatica", globalResources.getSession_addressEntered());
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, 2);
                 break;
             default:
                 super.onOptionsItemSelected(menuItem);
@@ -199,6 +215,7 @@ public class RestaurantsActivity extends AppCompatActivity{
     }
 
     //METODO para crear un toolbar personalizado
+    @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.restaurants_searcher_menu, menu);
         return true;
@@ -210,7 +227,11 @@ public class RestaurantsActivity extends AppCompatActivity{
 
         if(requestCode == 1 && data.getExtras() != null){
             getSupportActionBar().setTitle(localityAddress);
-            obtenerTodosLosRestaurantes();
+            try {
+                obtenerTodosLosRestaurantes();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

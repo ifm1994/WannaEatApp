@@ -3,8 +3,6 @@ package com.example.ifmfo.wannaeatapp.Activities;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.widget.NestedScrollView;
@@ -14,27 +12,27 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ifmfo.wannaeatapp.BookingProductAdapter;
+import com.example.ifmfo.wannaeatapp.Model.Coupon;
+import com.example.ifmfo.wannaeatapp.Model.Product;
 import com.example.ifmfo.wannaeatapp.Model.Restaurant;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
-import com.example.ifmfo.wannaeatapp.Model.User;
 import com.example.ifmfo.wannaeatapp.R;
 
-import org.w3c.dom.Text;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static com.example.ifmfo.wannaeatapp.R.drawable.*;
@@ -46,8 +44,8 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
     Restaurant lastRestaurantVisited;
     @SuppressLint("StaticFieldLeak")
     static RecyclerView bookingProductsContainer;
-    Spinner couponDesplegable;
-    String [] couponTitles = {"Elegir tu cupón"};
+    static Spinner couponDesplegable;
+    String [] couponTitles = {"Elige tu cupón"};
     @SuppressLint("StaticFieldLeak")
     static TextView totalPrice;
     NestedScrollView scrollView;
@@ -55,14 +53,48 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
     static Context context;
     Button applyCouponButton;
     RelativeLayout blackMask;
+    CardView continueBooking;
+    static TextView discontedProductLabel;
+    static TextView discontedPriceLabel;
+    static ImageButton removeCouponButton;
+    TextView restaurantName;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    @SuppressLint({"ClickableViewAccessibility", "SetTextI18n", "ResourceAsColor"})
+    @SuppressLint({"ClickableViewAccessibility", "SetTextI18n", "ResourceAsColor", "DefaultLocale"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_shopping_basket);
 
+        initUI();
+        setUpToolbar();
+        dibujarProductosDeLaReserva();
+        actualizarPrecioTotal();
+        rellenarDesplegableCupon();
+
+        if(globalResources.getUser_isLogged()){
+            blackMask.setVisibility(View.GONE);
+            rellenarDesplegableCupon();
+        }
+        if(globalResources.getCouponApplied() != null){
+            int index = globalResources.getIndexOfCouponApplied(globalResources.getCouponApplied(), couponTitles);
+            if(index != -1){
+                couponDesplegable.setSelection(index);
+                if(globalResources.getCouponApplied().getCategory().equals("")){
+                    //El descuento ya aplicado es para toda la cuenta
+                    discontedProductLabel.setText("Descuento del pedido");
+                }else{
+                    //El descuento ya aplicado es para un tipo de producto
+                    discontedProductLabel.setText(globalResources.getProductCouponApplied().getName());
+                }
+                discontedPriceLabel.setText("- " + String.format("%.2f", globalResources.getDiscountApplied()) + "€");
+            }
+        }
+        bindEvents();
+
+    }
+
+    private void initUI() {
         lastRestaurantVisited = (Restaurant) getIntent().getSerializableExtra("restaurant");
         couponDesplegable = findViewById(R.id.coupon_spinner);
         toolbar = findViewById(R.id.white_toolbar_with_orange_border);
@@ -70,12 +102,19 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
         scrollView = findViewById(R.id.scroll_content);
         bookingProductsContainer = findViewById(R.id.booking_products_container);
         context = getApplicationContext();
-        CardView continueBooking = findViewById(R.id.continueBookingButon);
+        continueBooking = findViewById(R.id.continueBookingButon);
         applyCouponButton = findViewById(R.id.apply_coupon_button);
         blackMask =  findViewById(R.id.black_mask);
+        discontedPriceLabel = findViewById(R.id.discounted_price);
+        discontedProductLabel = findViewById(R.id.discounted_product);
+        removeCouponButton = findViewById(R.id.removeAppliedCouponButton);
+        restaurantName = findViewById(R.id.booking_restaurant_name);
 
         bookingProductsContainer.setNestedScrollingEnabled(false);
+        restaurantName.setText(globalResources.getCurrentRestaurantNameOfBooking());
+    }
 
+    private void setUpToolbar() {
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null){
             Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -83,24 +122,125 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
             toolbar.setNavigationIcon(ic_action_orange_back);
             getSupportActionBar().setTitle("Pedido");
         }
-        dibujarProductosDeLaReserva();
-        actualizarPrecioTotal();
-        rellenarDesplegableCupon();
+    }
 
-
-        globalResources.user_logIn(new User(1,"Isaac", "",""));
-        if(globalResources.getUser_isLogged()){
-            blackMask.setVisibility(View.GONE);
-            rellenarDesplegableCupon();
-        }else{
-            blackMask.setOnTouchListener((v, event) -> true);
-        }
-
+    private void bindEvents() {
         continueBooking.setOnClickListener(arg0 -> {
-            startActivityForResult(new Intent(getApplicationContext(), BookingDetailsActivity.class),1);
+            if(globalResources.getUser_isLogged()){
+                startActivityForResult(new Intent(getApplicationContext(), BookingDetailsActivity.class),1);
+            }else{
+                Intent goLoginActivity = new Intent(getApplicationContext(), LoginActivity.class);
+                goLoginActivity.putExtra("NavigationCode","sinceBasket");
+                startActivityForResult(goLoginActivity,1);
+            }
+        });
+
+        blackMask.setOnClickListener(arg0 -> {
+            Intent goLoginActivity = new Intent(getApplicationContext(), LoginActivity.class);
+            goLoginActivity.putExtra("NavigationCode","sinceBasket");
+            startActivityForResult(goLoginActivity,1);
+        });
+
+        applyCouponButton.setOnClickListener(arg0 -> {
+            if(!couponDesplegable.getSelectedItem().toString().equals("Elige tu cupón")){
+                applyCoupon(globalResources.getCoupon(couponDesplegable.getSelectedItem().toString()));
+            }else{
+                Toast.makeText(getApplicationContext(), "Debe seleccionar un cupón", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        removeCouponButton.setOnClickListener(arg0 -> {
+            if(globalResources.getCouponApplied() != null){
+                removeCouponApplied();
+            }
         });
     }
 
+    public static Spinner getCouponDesplegable() {
+        return couponDesplegable;
+    }
+
+    private void rellenarDesplegableCupon() {
+
+        if(globalResources.getUser_isLogged()){
+            List<String> couponsTitlesList = new ArrayList<>();
+            List<Coupon> coupons =  globalResources.getUserLogged().getUserCoupons();
+
+            couponsTitlesList.add("Elige tu cupón");
+            int currentIdRestaurant = globalResources.getCurrentRestaurantIdOfBooking();
+            for(Coupon coupon : coupons){
+                if(coupon.getId_restaurant() == currentIdRestaurant)
+                    couponsTitlesList.add(coupon.getDescription());
+            }
+            if(couponsTitlesList.size() == 1){
+                couponsTitlesList.clear();
+                couponsTitlesList.add("No tiene cupones para este restaurante");
+                applyCouponButton.setVisibility(View.GONE);
+            }else{
+                applyCouponButton.setVisibility(View.VISIBLE);
+            }
+            couponTitles = new String[couponsTitlesList.size()];
+            couponTitles = couponsTitlesList.toArray(couponTitles);
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, couponTitles);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        couponDesplegable.setAdapter(adapter);
+    }
+
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
+    private void applyCoupon(Coupon coupon) {
+        if(globalResources.getCouponApplied() == null){
+            if(coupon.getCategory().equals("")){
+                //Descuento al pedido
+                Double discount = globalResources.shopping_basket_getTotalPrice() - (globalResources.shopping_basket_getTotalPrice() * (100 - coupon.getDiscount()) * 0.01);
+                discontedProductLabel.setText("Descuento del pedido");
+                discontedPriceLabel.setText("- " + String.format("%.2f", discount) + "€");
+                removeCouponButton.setVisibility(View.VISIBLE);
+                globalResources.setShopping_basket_totalPrice_with_discount(globalResources.shopping_basket_getTotalPrice() - discount);
+                globalResources.setCouponApplied(coupon);
+                globalResources.setDiscountApplied(discount);
+                FullShoppingBasketActivity.actualizarPrecioTotal();
+                Toast.makeText(getApplicationContext(),"cupón aplicado", Toast.LENGTH_LONG).show();
+            }else{
+                //Descuento a un artículo
+                Product cheapestProduct = globalResources.CheapestProductOfCategory(coupon.getCategory());
+                if(cheapestProduct == null){
+                    Toast.makeText(getApplicationContext(),"Este cupon no se puede aplicar porque no tiene ningún producto de esa categoria", Toast.LENGTH_LONG).show();
+                }else{
+                    Double discount = cheapestProduct.getPrice() - (cheapestProduct.getPrice() * (100 - coupon.getDiscount()) * 0.01);
+                    discontedPriceLabel.setText("- " + String.format("%.2f", discount) + "€");
+                    discontedProductLabel.setText(cheapestProduct.getName());
+                    removeCouponButton.setVisibility(View.VISIBLE);
+                    globalResources.setShopping_basket_totalPrice_with_discount(globalResources.shopping_basket_getTotalPrice() - discount);
+                    globalResources.setCouponApplied(coupon);
+                    globalResources.setProductCouponApplied(cheapestProduct);
+                    globalResources.setDiscountApplied(discount);
+                    FullShoppingBasketActivity.actualizarPrecioTotal();
+                    Toast.makeText(getApplicationContext(),"cupón aplicado", Toast.LENGTH_LONG).show();
+                }
+            }
+        }else{
+            int index = globalResources.getIndexOfCouponApplied(globalResources.getCouponApplied(), couponTitles);
+            if(index != -1){
+                couponDesplegable.setSelection(index);
+            }
+            Toast.makeText(getApplicationContext(),"Solo es posible aplicar un cupon por reserva", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    public static void removeCouponApplied(){
+        globalResources.setShopping_basket_totalPrice_with_discount(null);
+        discontedProductLabel.setText("");
+        discontedPriceLabel.setText("");
+        globalResources.setCouponApplied(null);
+        globalResources.setProductCouponApplied(null);
+        globalResources.setDiscountApplied(null);
+        removeCouponButton.setVisibility(View.GONE);
+        FullShoppingBasketActivity.actualizarPrecioTotal();
+        Toast.makeText(context,"El cupón ha dejado de estar aplicado", Toast.LENGTH_LONG).show();
+    }
 
     public boolean onTouchEvent(MotionEvent me) {
         return true;
@@ -108,15 +248,11 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
 
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     public static void actualizarPrecioTotal() {
-        totalPrice.setText( String.format("%.2f", globalResources.shopping_basket_getTotalPrice())+"€");
-    }
-
-
-    private void rellenarDesplegableCupon() {
-        couponTitles = new String[]{"Elegir tu cupón","Cupon 1","Cupon 2"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, couponTitles);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        couponDesplegable.setAdapter(adapter);
+        if(globalResources.getCouponApplied() == null){
+            totalPrice.setText( String.format("%.2f", globalResources.shopping_basket_getTotalPrice())+"€");
+        }else{
+            totalPrice.setText( String.format("%.2f", globalResources.getShopping_basket_totalPrice_with_discount())+"€");
+        }
     }
 
     public static void dibujarProductosDeLaReserva() {
@@ -137,6 +273,14 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.booking_details_menu, menu);
+        return true;
+    }
+
+
     //METODO para darle funcionalidad a los botones de la orange_toolbar
     public boolean onOptionsItemSelected(MenuItem menuItem){
 
@@ -147,6 +291,13 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
                 RestaurantActivity.updateBasketIndicator();
                 setResult(RESULT_OK, intent);
                 finish();
+                break;
+            case R.id.fill_basket_option:
+                globalResources.shopping_basket_emptyShoppingCart();
+                Intent goEmpty = new Intent( context, EmptyShoppingBasketActivity.class );
+                goEmpty.putExtra("restaurant", RestaurantActivity.getCurrentRestaurant());
+                startActivity(goEmpty);
+
                 break;
             default:
                 super.onOptionsItemSelected(menuItem);

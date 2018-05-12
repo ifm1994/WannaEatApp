@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/fill_basket_option"
+        android:icon="@drawable/ic_trash_icon"
+        android:title="empty_shopping_cart"
+        app:showAsAction="ifRoom" />
+</menu>

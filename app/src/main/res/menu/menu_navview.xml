@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/restaurants_section_button"
+            android:icon="@drawable/ic_restaurant_icon"
+            android:title="Restaurantes"/>
+        <item
+            android:id="@+id/bookings_section_button"
+            android:icon="@drawable/ic_bookings_icon"
+            android:title="Mis reservas"/>
+        <item
+            android:id="@+id/coupons_section_button"
+            android:icon="@drawable/ic_coupon_icon"
+            android:title="Mis cupones"/>
+        <item
+            android:id="@+id/configuration_button"
+            android:icon="@drawable/ic_settings_icon"
+            android:title="Configuración"/>
+        <item
+            android:id="@+id/log_in_out_button"
+            android:icon="@drawable/ic_power_icon"
+            android:checkable="false"
+            android:title="Iniciar sesión"/>
+    </group>
+
+</menu>

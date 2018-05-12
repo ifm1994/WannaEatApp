@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 
+import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 import com.example.ifmfo.wannaeatapp.R;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class LoadingAppActivity extends AppCompatActivity {
 
     private EditText inputDireccion;
     private Boolean direccionAutoCompletada = false;
+    static final GlobalResources globalResources = GlobalResources.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +150,8 @@ public class LoadingAppActivity extends AppCompatActivity {
                         direccionAutoCompletada = true;
 
                         Intent homeIntent = new Intent(LoadingAppActivity.this, HomeActivity.class);
-                        homeIntent.putExtra("direccionAutomatica", DirCalle.getAddressLine(0));
+                        globalResources.setSession_currentAddress(DirCalle.getAddressLine(0));
+
                         startActivity(homeIntent);
                         finish();
                     }

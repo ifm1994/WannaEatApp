@@ -14,6 +14,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:name=".Model.GlobalResources"
         android:icon="@mipmap/ic_launcher"
@@ -41,8 +46,8 @@
         <activity
             android:name=".Activities.HomeActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:screenOrientation="portrait" /> <!-- android:theme="@style/Theme.AppCompat.NoActionBar" -->
+
         <activity
             android:name=".Activities.RestaurantsActivity"
             android:configChanges="orientation"
@@ -94,11 +99,28 @@
                 android:value="com.example.ifmfo.wannaeatapp.Activities.RestaurantActivity" />
             />
         </activity>
-        <activity android:name=".Activities.BookingDetailsActivity"
+        <activity
+            android:name=".Activities.BookingDetailsActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.LoginActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".Activities.PaymentBookingActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.PaymentMadeActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.MyCouponsActicity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Activities.MyBookingsActivity"></activity>
     </application>
 
 </manifest>

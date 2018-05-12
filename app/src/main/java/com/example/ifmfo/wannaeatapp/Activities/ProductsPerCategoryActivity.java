@@ -166,7 +166,7 @@ public class ProductsPerCategoryActivity extends AppCompatActivity {
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     public static void updateBasketIndicator(){
         getBasketAmount().setText(Integer.toString(GLOBAL_RESOURCES.shopping_basket_getNumberOfProductsAdded()));
-        getBasketPrice().setText(String.format("%.2f", GLOBAL_RESOURCES.shopping_basket_getTotalPrice()) + "€");
+        getBasketPrice().setText(String.format("%.2f", Math.abs(GLOBAL_RESOURCES.shopping_basket_getTotalPrice())) + "€");
     }
 
     public static TextView getBasketPrice() {

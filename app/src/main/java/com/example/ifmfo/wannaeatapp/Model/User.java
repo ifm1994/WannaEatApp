@@ -1,11 +1,14 @@
 package com.example.ifmfo.wannaeatapp.Model;
 
+import java.util.List;
+
 public class User {
 
     private int id;
     private String name;
     private String email;
     private String phone;
+    private List<Coupon> userCoupons;
 
     public User(int id, String name, String email, String phone) {
         this.id = id;
@@ -41,5 +44,13 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public List<Coupon> getUserCoupons() {
+        return userCoupons;
+    }
+
+    public void setUserCoupons(List<Coupon> userCoupons) {
+        this.userCoupons = userCoupons;
     }
 }
