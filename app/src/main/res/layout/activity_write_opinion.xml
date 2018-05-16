@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusable="true"
+    android:id="@+id/main_layout"
+    android:focusableInTouchMode="true"
+    tools:context=".Activities.ProductsPerCategoryActivity">
+
+    <include layout="@layout/white_toolbar_whith_orange_bottom_bar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="?android:attr/actionBarSize"
+        android:paddingTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/opinion_name_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:text="Nombre"
+            android:textColor="@color/black"
+            android:typeface="normal"
+            android:layout_marginStart="60dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:paddingRight="30dp"
+            android:paddingLeft="20dp"
+            android:layout_height="match_parent"
+            android:paddingEnd="30dp"
+            android:paddingStart="20dp">
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/ic_user_icon" />
+
+            <EditText
+                android:id="@+id/opinion_name"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginLeft="40dp"
+                android:maxLines="1"
+                android:layout_marginStart="40dp"
+                android:background="@drawable/thin_orange_border_bottom"
+                android:textColor="@color/black" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/opinion_rate_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:text="Puntuación:"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/black"
+            android:typeface="normal" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:paddingTop="10dp"
+            android:id="@+id/stars_container"
+            android:layout_height="wrap_content">
+
+
+            <ImageView
+                android:id="@+id/star1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/orange"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_action_star_empty" />
+
+            <ImageView
+                android:id="@+id/star2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/orange"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_action_star_empty" />
+
+            <ImageView
+                android:id="@+id/star3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/orange"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_action_star_empty" />
+
+            <ImageView
+                android:id="@+id/star4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/orange"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_action_star_empty" />
+
+            <ImageView
+                android:id="@+id/star5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/orange"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_action_star_empty" />
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/opinion_commentary_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:text="Comentario:"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/black"
+            android:typeface="normal" />
+
+        <EditText
+            android:id="@+id/opinion_commentary"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/with_squared_orange_border"
+            android:ems="10"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:padding="10dp"
+            android:minHeight="80dp"
+            android:textSize="14sp"
+            android:textColorHint="@color/gray"
+            android:textColor="@color/black"
+            android:hint="Escriba aqui su reseña"
+            android:gravity="left|top"
+            android:inputType="textMultiLine"
+            tools:ignore="RtlHardcoded" />
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/sendOpinionButton"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"
+            app:cardBackgroundColor="@color/orange"
+            app:cardCornerRadius="25dp"
+            app:cardElevation="6dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Enviar opinión"
+                    android:textColor="@color/white" />
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

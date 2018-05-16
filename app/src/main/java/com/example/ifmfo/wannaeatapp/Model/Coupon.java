@@ -15,6 +15,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class Coupon {
+
+    static final GlobalResources globalResources = GlobalResources.getInstance();
     private int id;
     private String description;
     private int id_restaurant;
@@ -32,30 +34,7 @@ public class Coupon {
         this.category = category;
         this.discount = discount;
         this.code = code;
-        calculateRestaurantName(this.id_restaurant);
-    }
-
-    private void calculateRestaurantName(int id_restaurant) {
-        RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.getContext());
-        String urlPeticion = "https://wannaeatservice.herokuapp.com/api/restaurants/" + id_restaurant;
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.GET,
-                urlPeticion,
-                null,
-                response -> {
-                    try{
-                        setRestaurantName(response.getString("name"));
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                },
-                error -> {
-                    // Do something when error occurred
-                    Toast.makeText(LoginActivity.getContext(), "Error en la petición del restaurantes" + error,Toast.LENGTH_LONG).show();
-                }
-        );
-        requestQueue.add(jsonObjectRequest);
+        setRestaurantName(globalResources.getNameOfThisRestaurant(id_restaurant));
     }
 
     public int getId() {

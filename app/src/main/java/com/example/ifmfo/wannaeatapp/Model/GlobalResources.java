@@ -17,7 +17,7 @@ public class GlobalResources extends Application{
 
     private static GlobalResources instance;
     private Map<Product, Integer> shopping_basket_productsAdded; //Producto - Cantidad
-    private List <Restaurant> foundRestaurnts;
+    private List <Restaurant> foundRestaurnts;  //Todos los restaurantes de la app
     private List <CommensalPerHour> capacitiesPerHourOfRestaurant;
     private int shopping_basket_numberOfProductsAdded;
     private double shopping_basket_totalPrice;
@@ -34,8 +34,8 @@ public class GlobalResources extends Application{
     private Boolean isBookingForToday;
     private String reservationTime;
     private int number_of_commensals;
-    private Booking finalBooking;
     private String client_commentary;
+    private Booking last_single_booking_visited;
 
     public GlobalResources() {
         shopping_basket_numberOfProductsAdded = 0;
@@ -255,7 +255,7 @@ public class GlobalResources extends Application{
         setWellcomeMessageTo(false);
     }
 
-    public Coupon getCoupon(String description){
+    public Coupon getCouponWithThisDescription(String description){
         for(Coupon coupon : user.getUserCoupons()){
             if(coupon.getDescription().equals(description)){
                 return coupon;
@@ -272,6 +272,10 @@ public class GlobalResources extends Application{
 
     public void addFoundRestaurant(Restaurant restaurant){
         getFoundRestaurnts().add(restaurant);
+    }
+
+    public String getNameOfThisRestaurant(int id_restaurant){
+        return getFoundRestaurnts().get(id_restaurant - 1).getName();
     }
 
     public void clearFoundRestaurants(){
@@ -327,14 +331,6 @@ public class GlobalResources extends Application{
         this.number_of_commensals = number_of_commensals;
     }
 
-    public Booking getFinalBooking() {
-        return finalBooking;
-    }
-
-    public void setFinalBooking(Booking finalBooking) {
-        this.finalBooking = finalBooking;
-    }
-
     public String getClient_commentary() {
         return client_commentary;
     }
@@ -366,5 +362,21 @@ public class GlobalResources extends Application{
             result.append(entry.getKey().getId()).append(":").append(entry.getValue().toString()).append(",");
         }
         return result.toString().replace(" ", "_");
+    }
+
+    public Booking getLast_single_booking_visited() {
+        return last_single_booking_visited;
+    }
+
+    public void setLast_single_booking_visited(Booking last_single_booking_visited) {
+        this.last_single_booking_visited = last_single_booking_visited;
+    }
+
+    public void updateStateKeepLogged(int id_booking) {
+        for(Booking booking: getUserLogged().getUserBookings()){
+            if(booking.getId() == id_booking){
+                booking.setCanrate(false);
+            }
+        }
     }
 }

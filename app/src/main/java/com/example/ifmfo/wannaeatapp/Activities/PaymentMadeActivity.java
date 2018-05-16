@@ -87,13 +87,14 @@ public class PaymentMadeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.configuration_button:
-
+                    startActivityForResult(new Intent(PaymentMadeActivity.this, ConfigurationActivity.class), 1);
                     break;
 
                 case R.id.log_in_out_button:
                     if(globalResources.getUser_isLogged()){
+                        globalResources.getUserLogged().getUserCoupons().clear();
+                        globalResources.getUserLogged().getUserBookings().clear();
                         globalResources.user_logOut();
-
                         TextView userNameLoggedLabel = navView.getHeaderView(0).findViewById(R.id.user_name_logged);
                         TextView userEmailLoggedLabel= navView.getHeaderView(0).findViewById(R.id.user_email_logged);
 

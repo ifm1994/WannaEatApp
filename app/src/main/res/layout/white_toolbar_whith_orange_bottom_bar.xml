@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar android:id="@+id/white_toolbar_with_orange_border"
+<android.support.v7.widget.Toolbar
+    android:id="@+id/white_toolbar_with_orange_border"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
     android:background="@drawable/thick_orange_border_bottom"

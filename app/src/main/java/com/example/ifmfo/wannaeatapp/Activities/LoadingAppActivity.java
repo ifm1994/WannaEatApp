@@ -18,9 +18,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
+import com.example.ifmfo.wannaeatapp.Model.Restaurant;
 import com.example.ifmfo.wannaeatapp.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,17 +45,60 @@ public class LoadingAppActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_app);
+        obtenerTodosLosRestaurantes();
 
         inputDireccion = (EditText) findViewById(R.id.restaurantAddressInput);
 
-        /* Uso de la clase LocationManager para obtener la localización del GPS */
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //Si no tengo los permisos necesarios los solicito
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-        } else {
-            //Si tengo los permisos, pues consigo la ubicacion actual
-            locationStart();
-        }
+    }
+
+    private void obtenerTodosLosRestaurantes() {
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        String urlPeticion = "https://wannaeatservice.herokuapp.com/api/restaurants";
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                urlPeticion,
+                null,
+                response -> {
+                    try{
+                        // Loop through the array elements
+                        for(int i=0;i<response.length();i++){
+                            // Get current json object
+                            JSONObject restaurantObject = response.getJSONObject(i);
+                            // Get the current restaurant (json object) data
+                            int id = restaurantObject.getInt("id");
+                            String name = restaurantObject.getString("name");
+                            String address = restaurantObject.getString("address");
+                            String kindOfFood = restaurantObject.getString("kind_of_food");
+                            String rating = restaurantObject.getString("rating");
+                            String imagePath = restaurantObject.getString("image_path");
+                            String openningHours = restaurantObject.getString("opening_hours");
+                            String description = restaurantObject.getString("description");
+                            String phone = restaurantObject.getString("phone");
+                            double latitude = Double.parseDouble(restaurantObject.getString("latitude"));
+                            double longitude = Double.parseDouble(restaurantObject.getString("longitude"));
+
+                            Restaurant restaurant = new Restaurant(id, name, address, kindOfFood, rating, imagePath, openningHours, description, phone, latitude, longitude);
+                            globalResources.addFoundRestaurant(restaurant);
+                        }
+
+                        /* Uso de la clase LocationManager para obtener la localización del GPS */
+                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            //Si no tengo los permisos necesarios los solicito
+                            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
+                        } else {
+                            //Si tengo los permisos, pues consigo la ubicacion actual
+                            locationStart();
+                        }
+
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    // Do something when error occurred
+                }
+        );
+        requestQueue.add(jsonObjectRequest);
     }
 
     private void locationStart() {

@@ -46,7 +46,7 @@
         <activity
             android:name=".Activities.HomeActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" /> <!-- android:theme="@style/Theme.AppCompat.NoActionBar" -->
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activities.RestaurantsActivity"
@@ -119,8 +119,40 @@
         <activity
             android:name=".Activities.MyCouponsActicity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".Activities.MyBookingsActivity"></activity>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.MyBookingsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.SingleBookingMade"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.WriteOpinionActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.ConfigurationActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.AccountInfoActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.AccountChangePasswordActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.DeleteAccountActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.RegisterUserActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>

@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -19,7 +20,6 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -55,6 +55,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     Toolbar toolbar;
     TextView numberOfCommensals;
     EditText userComment;
+    RelativeLayout mainLayout;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -85,6 +86,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         continueBooking = findViewById(R.id.continueBookingButon);
         numberOfCommensals.setText(Integer.toString(amountOfCommensals));
         userComment = findViewById(R.id.booking_user_comment);
+        mainLayout = findViewById(R.id.main_layout);
     }
 
     private void setupToolbar() {
@@ -130,9 +132,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
         continueBooking.setOnClickListener(arg0 -> {
             if(numberOfCommensals.getText().equals("0")){
-                Toast.makeText(getApplicationContext(),"Número de comensales no válido", Toast.LENGTH_SHORT).show();
+                Snackbar.make(mainLayout ,"Número de comensales no válido",Snackbar.LENGTH_SHORT).show();
             }else if(bookingHoursDesplegable.getSelectedItem() == "HH" || bookingMinutesDesplegable.getSelectedItem() == "MM"){
-                Toast.makeText(getApplicationContext(),"Debe elegir la hora deseada", Toast.LENGTH_SHORT).show();
+                Snackbar.make(mainLayout ,"Debe elegir la hora deseada",Snackbar.LENGTH_SHORT).show();
             }else{
                 globalResources.setBookingForToday(bookingForToday);
                 globalResources.setNumber_of_commensals(amountOfCommensals);
@@ -201,7 +203,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     },
                     error -> {
                         // Do something when error occurred
-                        Toast.makeText(getApplicationContext(), "Error en la petición de capacidades por hora",Toast.LENGTH_LONG).show();
+                        Snackbar.make(mainLayout ,"Error en la petición de capacidades por hora",Snackbar.LENGTH_SHORT).show();
+
                     }
             );
             requestQueue.add(jsonObjectRequest);

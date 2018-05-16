@@ -2,6 +2,7 @@ package com.example.ifmfo.wannaeatapp;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
@@ -47,7 +48,7 @@ public class ProductCardViewHolder extends RecyclerView.ViewHolder{
                 RestaurantActivity.updateBasketIndicator();
                 ProductsPerCategoryActivity.updateBasketIndicator();
             }else{
-                Toast.makeText(context, "No se puede añadir este producto porque ya existe alguno en la cesta que es de otro restaurante",Toast.LENGTH_LONG).show();
+                RestaurantActivity.showMessage("No se puede añadir este producto porque ya existe alguno en la cesta que es de otro restaurante");
             }
         });
 

@@ -20,9 +20,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
+import com.example.ifmfo.wannaeatapp.Model.Restaurant;
 import com.example.ifmfo.wannaeatapp.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -38,8 +47,6 @@ public class HomeActivity extends AppCompatActivity {
     private EditText inputDireccion;
     CardView searchRestaurantsButton;
     RelativeLayout mainHomeLayout;
-    private TextView userNameLoggedLabel;
-    private TextView userEmailLoggedLabel;
 
     @TargetApi(Build.VERSION_CODES.O)
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -112,12 +119,13 @@ public class HomeActivity extends AppCompatActivity {
                         startActivityForResult(new Intent(HomeActivity.this, MyCouponsActicity.class), 1);
                         break;
                     case R.id.configuration_button:
-
+                        startActivityForResult(new Intent(HomeActivity.this, ConfigurationActivity.class), 1);
                         break;
                     case R.id.log_in_out_button:
                         if(globalResources.getUser_isLogged()){
+                            globalResources.getUserLogged().getUserCoupons().clear();
+                            globalResources.getUserLogged().getUserBookings().clear();
                             globalResources.user_logOut();
-
                             globalResources.getNavigationView().getMenu().findItem(R.id.log_in_out_button).setTitle("Iniciar sesión");
                             TextView userNameLoggedLabel = globalResources.getNavigationView().getHeaderView(0).findViewById(R.id.user_name_logged);
                             TextView userEmailLoggedLabel= globalResources.getNavigationView().getHeaderView(0).findViewById(R.id.user_email_logged);

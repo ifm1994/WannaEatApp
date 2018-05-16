@@ -9,7 +9,7 @@
     android:fitsSystemWindows="true">
 
     <!-- Layout real de la actividad -->
-    <include layout="@layout/activity_payment_make_content" />
+    <include layout="@layout/activity_payment_made_content" />
 
     <!-- Layout del menú lateral (Navigation View) -->
     <android.support.design.widget.NavigationView

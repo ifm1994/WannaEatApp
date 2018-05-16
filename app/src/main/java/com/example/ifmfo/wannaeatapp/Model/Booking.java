@@ -1,7 +1,21 @@
 package com.example.ifmfo.wannaeatapp.Model;
 
-public class Booking {
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.ifmfo.wannaeatapp.Activities.LoginActivity;
+
+import org.json.JSONException;
+
+import java.io.Serializable;
+
+public class Booking implements Serializable {
+
+    static final GlobalResources globalResources = GlobalResources.getInstance();
+    private int id;
     private int id_restaurant;
     private int id_user;
     private String time;
@@ -14,8 +28,11 @@ public class Booking {
     private String client_email;
     private int number_of_commensals;
     private String client_commentary;
+    private String booking_restaurant_name;
+    private Boolean canrate;
+    private int status;
 
-    public Booking(int id_restaurant,int id_user, String time, String price, String id_transaction, String products_and_amount, String payment_method, String client_name, String client_phone, String client_email, int number_of_commensals, String client_commentary) {
+    public Booking(int id_restaurant,int id_user, String time, String price, String id_transaction, String products_and_amount, String payment_method, String client_name, String client_phone, String client_email, int number_of_commensals, String client_commentary, Boolean canrate, int status) {
         this.id_restaurant = id_restaurant;
         this.id_user = id_user;
         this.time = time;
@@ -28,6 +45,17 @@ public class Booking {
         this.client_email = client_email;
         this.number_of_commensals = number_of_commensals;
         this.client_commentary = client_commentary;
+        this.canrate = canrate;
+        this.status = status;
+        setBooking_restaurant_name(globalResources.getNameOfThisRestaurant(id_restaurant));
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId_restaurant() {
@@ -124,5 +152,29 @@ public class Booking {
 
     public void setClient_commentary(String client_commentary) {
         this.client_commentary = client_commentary;
+    }
+
+    public void setBooking_restaurant_name(String booking_restaurant_name){
+        this.booking_restaurant_name = booking_restaurant_name;
+    }
+
+    public String getBooking_restaurant_name() {
+        return this.booking_restaurant_name;
+    }
+
+    public Boolean getCanrate() {
+        return canrate;
+    }
+
+    public void setCanrate(Boolean canrate) {
+        this.canrate = canrate;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

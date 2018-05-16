@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ifmfo.wannaeatapp.Model.Restaurant;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
@@ -37,6 +40,7 @@ public class RestaurantActivity extends AppCompatActivity {
     static TextView basketPrice, basketAmount;
     private static Menu menu;
     static final GlobalResources globalResources = GlobalResources.getInstance();
+    static RelativeLayout mainLayout;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -44,20 +48,26 @@ public class RestaurantActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant);
 
-        restaurantName = findViewById(R.id.single_restaurant_name);
-        restaurantImage = findViewById(R.id.single_restaurant_image);
-        toolbar = findViewById(R.id.transparent_toolbar);
-        tabLayout = findViewById(R.id.tabLayout);
-        viewPager = findViewById(R.id.restaurantsTabContainer);
-
+        initUI();
         initializeActivity();
+        setupToolbar();
+    }
 
+    private void setupToolbar() {
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_action_orange_back);
+    }
 
+    private void initUI() {
+        restaurantName = findViewById(R.id.single_restaurant_name);
+        restaurantImage = findViewById(R.id.single_restaurant_image);
+        toolbar = findViewById(R.id.transparent_toolbar);
+        tabLayout = findViewById(R.id.tabLayout);
+        mainLayout = findViewById(R.id.main_layout);
+        viewPager = findViewById(R.id.restaurantsTabContainer);
     }
 
     public void initializeActivity(){
@@ -174,5 +184,9 @@ public class RestaurantActivity extends AppCompatActivity {
 
     public static Restaurant getCurrentRestaurant() {
         return thisRestaurant;
+    }
+
+    public static void showMessage(String message){
+        Snackbar.make(mainLayout ,message,Snackbar.LENGTH_SHORT).show();
     }
 }

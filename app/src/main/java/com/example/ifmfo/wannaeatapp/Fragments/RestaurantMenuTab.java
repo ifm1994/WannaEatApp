@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,6 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.ifmfo.wannaeatapp.Activities.RestaurantActivity;
 import com.example.ifmfo.wannaeatapp.ProductCategoryAdapter;
 import com.example.ifmfo.wannaeatapp.Model.Product;
 import com.example.ifmfo.wannaeatapp.Model.Restaurant;
@@ -52,6 +55,7 @@ public class RestaurantMenuTab extends Fragment {
     LinearLayout categoriesContainer;
     View fragmentView;
     RecyclerView categoryListContainer;
+    NestedScrollView mainLayout;
 
     @SuppressLint("ValidFragment")
     public RestaurantMenuTab(Restaurant restaurant){
@@ -64,6 +68,7 @@ public class RestaurantMenuTab extends Fragment {
 //        setHasOptionsMenu(true);
         fragmentView = inflater.inflate(R.layout.fragment_restaurant_menu_tab,container, false);
 
+        mainLayout = fragmentView.findViewById(R.id.main_layout);
         categoriesContainer = fragmentView.findViewById(R.id.categoriesContainer);
         obtenerProductosDelRestaurante();
 
@@ -104,7 +109,7 @@ public class RestaurantMenuTab extends Fragment {
                 },
                 error -> {
                     // Do something when error occurred
-                    Toast.makeText(getContext(), "Error en la petición de productos del restaurante" + thisRestaurant.getId(),Toast.LENGTH_LONG).show();
+                    RestaurantActivity.showMessage("Error en la petición de productos del restaurante");
                 }
         );
         requestQueue.add(jsonObjectRequest);

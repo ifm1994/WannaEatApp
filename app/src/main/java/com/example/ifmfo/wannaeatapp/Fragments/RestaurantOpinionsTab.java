@@ -3,13 +3,12 @@ package com.example.ifmfo.wannaeatapp.Fragments;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -19,8 +18,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.ifmfo.wannaeatapp.Activities.RestaurantActivity;
 import com.example.ifmfo.wannaeatapp.Model.Opinion;
-import com.example.ifmfo.wannaeatapp.Model.Product;
 import com.example.ifmfo.wannaeatapp.Model.Restaurant;
 import com.example.ifmfo.wannaeatapp.OpinionCardAdapter;
 import com.example.ifmfo.wannaeatapp.R;
@@ -44,6 +43,7 @@ public class RestaurantOpinionsTab extends Fragment {
     TextView amountOfOpinionsView;
     RecyclerView opinionsContainer;
     public static List<Opinion> allOpinions = new ArrayList<>();
+    NestedScrollView mainLayout;
 
     @SuppressLint("ValidFragment")
     public RestaurantOpinionsTab(Restaurant restaurant){
@@ -54,19 +54,23 @@ public class RestaurantOpinionsTab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         fragmentView = inflater.inflate(R.layout.fragment_restaurant_opinions_tab,container, false);
 
-        restaurantRatingView = fragmentView.findViewById(R.id.single_restaurant_rating);
-        amountOfOpinionsView = fragmentView.findViewById(R.id.single_restaurant_number_of_opinions);
-
+        initUI();
         obtenerOpinionesDelRestaurante();
 
         return fragmentView;
+    }
+
+    private void initUI() {
+        restaurantRatingView = fragmentView.findViewById(R.id.single_restaurant_rating);
+        amountOfOpinionsView = fragmentView.findViewById(R.id.single_restaurant_number_of_opinions);
+        mainLayout = fragmentView.findViewById(R.id.main_layout);
     }
 
     private void obtenerOpinionesDelRestaurante() {
         allOpinions.clear();
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         String urlPeticion = "https://wannaeatservice.herokuapp.com/api/opinions/restaurant/" + thisRestaurant.getId();
-        @SuppressLint("SetTextI18n") JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+        @SuppressLint({"SetTextI18n", "DefaultLocale"}) JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 urlPeticion,
                 null,
@@ -91,7 +95,7 @@ public class RestaurantOpinionsTab extends Fragment {
                         }
                         calculateTotalRating();
                         dibujarListaDeOpiniones();
-                        restaurantRatingView.setText(Double.toString(totalRestaurantRating));
+                        restaurantRatingView.setText(String.format("%.2f",totalRestaurantRating));
                         amountOfOpinionsView.setText(Integer.toString(allOpinions.size()));
 
                     }catch (JSONException e){
@@ -100,7 +104,7 @@ public class RestaurantOpinionsTab extends Fragment {
                 },
                 error -> {
                     // Do something when error occurred
-                    Toast.makeText(getContext(), "Error en la petición de productos del restaurante" + thisRestaurant.getId(),Toast.LENGTH_LONG).show();
+                    RestaurantActivity.showMessage("Error en la petición de productos del restaurante, vuelva a intentarlo. Disculpe las molestias");
                 }
         );
         requestQueue.add(jsonObjectRequest);
@@ -110,10 +114,14 @@ public class RestaurantOpinionsTab extends Fragment {
 
     private void calculateTotalRating() {
         Double result = 0.0;
-        for(Opinion opinion : allOpinions){
-            result += opinion.getRating();
+        if(allOpinions.size() != 0){
+            for(Opinion opinion : allOpinions){
+                result += opinion.getRating();
+            }
+            totalRestaurantRating = result/allOpinions.size();
+        }else{
+            totalRestaurantRating = result;
         }
-        totalRestaurantRating = result/allOpinions.size();
     }
 
     private void dibujarListaDeOpiniones() {

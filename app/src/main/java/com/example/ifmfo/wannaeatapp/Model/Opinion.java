@@ -5,6 +5,10 @@ public class Opinion {
     private int idRestaurant;
     private int idUser;
     private String writerName;
+    private double rating;
+    private String description;
+    private String date;
+
 
     public Opinion(int id, int idRestaurant, int idUser, String writerName, double rating, String description, String date) {
         this.id = id;
@@ -43,10 +47,6 @@ public class Opinion {
     public String getDate() {
         return date;
     }
-
-    private double rating;
-    private String description;
-    private String date;
 
 
 }

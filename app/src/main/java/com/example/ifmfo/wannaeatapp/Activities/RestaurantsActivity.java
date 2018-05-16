@@ -7,6 +7,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +56,7 @@ public class RestaurantsActivity extends AppCompatActivity{
     Location currentLocation;
     Geocoder geocoder;
     Toolbar toolbar;
+    LinearLayout mainLayout;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -72,7 +75,7 @@ public class RestaurantsActivity extends AppCompatActivity{
                 //Cambio el titulo a la orange_toolbar
                 getSupportActionBar().setTitle(localityAddress);
             } catch (IOException e) {
-                Toast.makeText(this, "La dirección no ha sido encontrada", Toast.LENGTH_SHORT).show();
+                Snackbar.make(mainLayout ,"La dirección no ha sido encontrada",Snackbar.LENGTH_SHORT).show();
             }
         }
         try {
@@ -84,6 +87,7 @@ public class RestaurantsActivity extends AppCompatActivity{
 
     private void initUI() {
         currentLocation = new Location("current location");
+        mainLayout = findViewById(R.id.main_layout);
         filterSelected = SearchFilter.LOCALITY;
         geocoder = new Geocoder(this);
         toolbar = findViewById(R.id.toolbar);
@@ -110,7 +114,6 @@ public class RestaurantsActivity extends AppCompatActivity{
     }
 
     private void obtenerTodosLosRestaurantes() throws IOException {
-
         if(globalResources.getFoundRestaurnts().size() == 0){
             globalResources.clearFoundRestaurants();
             RequestQueue requestQueue = Volley.newRequestQueue(RestaurantsActivity.this);
@@ -150,7 +153,7 @@ public class RestaurantsActivity extends AppCompatActivity{
                     },
                     error -> {
                         // Do something when error occurred
-                        Toast.makeText(RestaurantsActivity.this, "Error en la petición de restaurantes",Toast.LENGTH_LONG).show();
+                        Snackbar.make(mainLayout ,"Error en la petición de restaurantes",Snackbar.LENGTH_SHORT).show();
                     }
             );
             requestQueue.add(jsonObjectRequest);
@@ -172,7 +175,6 @@ public class RestaurantsActivity extends AppCompatActivity{
                 }
             }
         }
-//        Toast.makeText(this, "" + listOfRestaurantsFiltered.size(),Toast.LENGTH_LONG).show();
         dibujarTarjetasDeRestaurantes(listOfRestaurantsFiltered);
     }
 

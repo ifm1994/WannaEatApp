@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,14 +23,20 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.ifmfo.wannaeatapp.BookingProductAdapter;
 import com.example.ifmfo.wannaeatapp.Model.Coupon;
 import com.example.ifmfo.wannaeatapp.Model.Product;
 import com.example.ifmfo.wannaeatapp.Model.Restaurant;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 import com.example.ifmfo.wannaeatapp.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +65,7 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
     static TextView discontedPriceLabel;
     static ImageButton removeCouponButton;
     TextView restaurantName;
+    static RelativeLayout mainLayout;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @SuppressLint({"ClickableViewAccessibility", "SetTextI18n", "ResourceAsColor", "DefaultLocale"})
@@ -74,7 +82,7 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
 
         if(globalResources.getUser_isLogged()){
             blackMask.setVisibility(View.GONE);
-            rellenarDesplegableCupon();
+            obtenerCuponesDelUsuario();
         }
         if(globalResources.getCouponApplied() != null){
             int index = globalResources.getIndexOfCouponApplied(globalResources.getCouponApplied(), couponTitles);
@@ -109,6 +117,7 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
         discontedProductLabel = findViewById(R.id.discounted_product);
         removeCouponButton = findViewById(R.id.removeAppliedCouponButton);
         restaurantName = findViewById(R.id.booking_restaurant_name);
+        mainLayout = findViewById(R.id.main_layout);
 
         bookingProductsContainer.setNestedScrollingEnabled(false);
         restaurantName.setText(globalResources.getCurrentRestaurantNameOfBooking());
@@ -143,9 +152,9 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
 
         applyCouponButton.setOnClickListener(arg0 -> {
             if(!couponDesplegable.getSelectedItem().toString().equals("Elige tu cupón")){
-                applyCoupon(globalResources.getCoupon(couponDesplegable.getSelectedItem().toString()));
+                applyCoupon(globalResources.getCouponWithThisDescription(couponDesplegable.getSelectedItem().toString()));
             }else{
-                Toast.makeText(getApplicationContext(), "Debe seleccionar un cupón", Toast.LENGTH_LONG).show();
+                Snackbar.make(mainLayout ,"Debe seleccionar un cupón",Snackbar.LENGTH_SHORT).show();
             }
         });
 
@@ -188,6 +197,47 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
         couponDesplegable.setAdapter(adapter);
     }
 
+    private void obtenerCuponesDelUsuario() {
+        List <Coupon> allCouponsOfUser = new ArrayList<>();
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        String urlPeticion = "https://wannaeatservice.herokuapp.com/api/coupons/user/" + globalResources.getUserLogged().getId();
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                urlPeticion,
+                null,
+                response -> {
+                    try{
+                        // Loop through the array elements
+                        for(int i=0;i<response.length();i++){
+                            // Get current json object
+                            JSONObject restaurantObject = response.getJSONObject(i);
+                            // Get the current restaurant (json object) data
+                            int id = restaurantObject.getInt("id");
+                            String description = restaurantObject.getString("description");
+                            int id_restaurant = restaurantObject.getInt("id_restaurant");
+                            int id_user = restaurantObject.getInt("id_user");
+                            String category = restaurantObject.getString("category");
+                            int discount = restaurantObject.getInt("discount");
+                            String code = restaurantObject.getString("code");
+
+                            Coupon coupon = new Coupon(id, description, id_restaurant, id_user,category, discount, code);
+                            allCouponsOfUser.add(coupon);
+                        }
+                        globalResources.getUserLogged().setUserCoupons(allCouponsOfUser);
+                        rellenarDesplegableCupon();
+
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    // Do something when error occurred
+                    Snackbar.make(mainLayout ,"Error en la petición de cupones",Snackbar.LENGTH_SHORT).show();
+                }
+        );
+        requestQueue.add(jsonObjectRequest);
+    }
+
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     private void applyCoupon(Coupon coupon) {
         if(globalResources.getCouponApplied() == null){
@@ -201,12 +251,12 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
                 globalResources.setCouponApplied(coupon);
                 globalResources.setDiscountApplied(discount);
                 FullShoppingBasketActivity.actualizarPrecioTotal();
-                Toast.makeText(getApplicationContext(),"cupón aplicado", Toast.LENGTH_LONG).show();
+                Snackbar.make(mainLayout ,"Cupón aplicado",Snackbar.LENGTH_SHORT).show();
             }else{
                 //Descuento a un artículo
                 Product cheapestProduct = globalResources.CheapestProductOfCategory(coupon.getCategory());
                 if(cheapestProduct == null){
-                    Toast.makeText(getApplicationContext(),"Este cupon no se puede aplicar porque no tiene ningún producto de esa categoria", Toast.LENGTH_LONG).show();
+                    Snackbar.make(mainLayout ,"Este cupon no se puede aplicar porque no tiene ningún producto de esa categoria",Snackbar.LENGTH_SHORT).show();
                 }else{
                     Double discount = cheapestProduct.getPrice() - (cheapestProduct.getPrice() * (100 - coupon.getDiscount()) * 0.01);
                     discontedPriceLabel.setText("- " + String.format("%.2f", discount) + "€");
@@ -217,7 +267,7 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
                     globalResources.setProductCouponApplied(cheapestProduct);
                     globalResources.setDiscountApplied(discount);
                     FullShoppingBasketActivity.actualizarPrecioTotal();
-                    Toast.makeText(getApplicationContext(),"cupón aplicado", Toast.LENGTH_LONG).show();
+                    Snackbar.make(mainLayout ,"Cupón aplicado",Snackbar.LENGTH_SHORT).show();
                 }
             }
         }else{
@@ -225,7 +275,7 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
             if(index != -1){
                 couponDesplegable.setSelection(index);
             }
-            Toast.makeText(getApplicationContext(),"Solo es posible aplicar un cupon por reserva", Toast.LENGTH_LONG).show();
+            Snackbar.make(mainLayout ,"Solo es posible aplicar un cupon por reserva",Snackbar.LENGTH_SHORT).show();
         }
 
     }
@@ -239,7 +289,8 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
         globalResources.setDiscountApplied(null);
         removeCouponButton.setVisibility(View.GONE);
         FullShoppingBasketActivity.actualizarPrecioTotal();
-        Toast.makeText(context,"El cupón ha dejado de estar aplicado", Toast.LENGTH_LONG).show();
+        Snackbar.make(mainLayout ,"El cupón ha dejado de estar aplicado",Snackbar.LENGTH_SHORT).show();
+
     }
 
     public boolean onTouchEvent(MotionEvent me) {

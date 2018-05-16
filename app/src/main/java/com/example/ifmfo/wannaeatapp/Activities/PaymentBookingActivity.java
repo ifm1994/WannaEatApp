@@ -2,6 +2,7 @@ package com.example.ifmfo.wannaeatapp.Activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -15,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.android.volley.AuthFailureError;
@@ -46,7 +46,7 @@ public class PaymentBookingActivity extends AppCompatActivity {
     TextView totalPrice, clientNameLabel, clientNumberLabel, clientMailLabel, cardNameLabel, cardNumberLabel, cardCaducityLabel, cardCVVLabel;
     CardView continueButton;
     LinearLayout visaPayMethodContainer;
-    RelativeLayout paypalPayMethodContainer;
+    RelativeLayout paypalPayMethodContainer, mainLayout;
 
 
     @Override
@@ -88,6 +88,7 @@ public class PaymentBookingActivity extends AppCompatActivity {
         clientMailLabel = findViewById(R.id.booking_mail_label);
         visaPayMethodContainer = findViewById(R.id.visa_method_container);
         paypalPayMethodContainer = findViewById(R.id.paypal_method_container);
+        mainLayout = findViewById(R.id.main_layout);
 
         if(globalResources.getCouponApplied() != null){
             totalPrice.setText(String.format("%.2f",globalResources.getShopping_basket_totalPrice_with_discount()) + "€");
@@ -114,7 +115,7 @@ public class PaymentBookingActivity extends AppCompatActivity {
     private void bindEvents() {
         continueButton.setOnClickListener(arg0 -> {
             if(!validateAllInputs() && paymentMethodSpinner.getSelectedItem().toString().equals("Tarjeta bancaria")){
-                Toast.makeText(getApplicationContext(),"Debe rellenar correctamente todos los datos", Toast.LENGTH_SHORT).show();
+                Snackbar.make(mainLayout ,"Debe rellenar correctamente todos los datos",Snackbar.LENGTH_SHORT).show();
             }else{
                 clientNameLabel.setTextColor(getResources().getColor(R.color.black));
                 clientNumberLabel.setTextColor(getResources().getColor(R.color.black));
@@ -182,9 +183,30 @@ public class PaymentBookingActivity extends AppCompatActivity {
             //Pagar mediante paypal
         }
 
-        //todo: arreglar cuando no estoy conectado sale error al registrar la reserva
-
+        //Esto se ejecuta si el pago se ha realizado correctamente
         registrarReserva(createFinalBooking());
+        removeCouponIfUsed();
+    }
+
+    private void removeCouponIfUsed() {
+        if(globalResources.getCouponApplied() != null){
+            String urlPeticion = "https://wannaeatservice.herokuapp.com/api/coupons/" + globalResources.getCouponApplied().getId();
+            StringRequest stringRequest = new StringRequest(Request.Method.DELETE, urlPeticion,
+                    response -> {
+                        Snackbar.make(mainLayout ,"Cupón utilizado",Snackbar.LENGTH_SHORT).show();
+                        globalResources.getUserLogged().removeCoupon(globalResources.getCouponApplied());
+                        globalResources.setCouponApplied(null);
+                        finishBookingPayment();
+                    },
+                    error -> {
+                        Snackbar.make(mainLayout ,"Error al intentar aplicar el cupón. Disculpe las molestas",Snackbar.LENGTH_SHORT).show();
+                        finishBookingPayment();
+                    }){
+            };
+
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            requestQueue.add(stringRequest);
+        }
     }
 
     private Booking createFinalBooking() {
@@ -220,10 +242,11 @@ public class PaymentBookingActivity extends AppCompatActivity {
                 clientNumber.getText().toString(),
                 clientMail.getText().toString(),
                 globalResources.getNumber_of_commensals(),
-                globalResources.getClient_commentary());
+                globalResources.getClient_commentary(),
+                true,
+                0);
 
-        globalResources.setFinalBooking(booking);
-
+        globalResources.getUserLogged().addNewBooking(booking);
         return booking;
     }
 
@@ -231,12 +254,11 @@ public class PaymentBookingActivity extends AppCompatActivity {
         String urlPeticion = "https://wannaeatservice.herokuapp.com/api/bookings";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlPeticion,
             response -> {
-                Toast.makeText(getApplicationContext(), "Reserva realizada", Toast.LENGTH_LONG).show();
+                Snackbar.make(mainLayout ,"Reserva realizada",Snackbar.LENGTH_SHORT).show();
                 finishBookingPayment();
             },
             error -> {
-                Toast.makeText(getApplicationContext(), error + "", Toast.LENGTH_LONG).show();
-                //todo: quitar cuando funcione sin estar registrado
+                Snackbar.make(mainLayout ,"Error al registrar la reserva",Snackbar.LENGTH_SHORT).show();
                 finishBookingPayment();
             }){
 
@@ -257,6 +279,8 @@ public class PaymentBookingActivity extends AppCompatActivity {
                 params.put("client_email", "" + finalBooking.getClient_email());
                 params.put("number_of_commensals", "" + finalBooking.getNumber_of_commensals());
                 params.put("client_commentary", "" + finalBooking.getClient_commentary());
+                params.put("canrate", "true");
+                params.put("status", "0");
 
                 return params;
             }
@@ -264,12 +288,9 @@ public class PaymentBookingActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
-
-
     }
 
     public void finishBookingPayment(){
-        Toast.makeText(getApplicationContext(), "Ir a pantalla final ", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(getApplicationContext(), PaymentMadeActivity.class);
         startActivityForResult(intent, 1);
     }
@@ -286,11 +307,29 @@ public class PaymentBookingActivity extends AppCompatActivity {
         return validateInputName() && validateInputPhoneNumber() && validateInputMail() && validateCardName() &&validateCardNumber() && validateCardCaducity() && validateCardCVV();
     }
 
+    private boolean validateInputName() {
+        if(clientName.getText().toString().length() >= 3 && !clientName.getText().toString().equals(" ")){
+            return true;
+        }else{
+            clientNameLabel.setTextColor(getResources().getColor(R.color.red));
+            return false;
+        }
+    }
+
     private boolean validateInputMail() {
         if(regularExpressionValidator("^[a-zA-Z0-9\\._-]+@[a-zA-Z0-9-]{2,}[.][a-zA-Z]{2,4}$", clientMail.getText().toString())){
             return true;
         }else{
             clientMailLabel.setTextColor(getResources().getColor(R.color.red));
+            return false;
+        }
+    }
+
+    private boolean validateInputPhoneNumber() {
+        if(clientNumber.getText().toString().length() == 9){
+            return true;
+        }else{
+            clientNumberLabel.setTextColor(getResources().getColor(R.color.red));
             return false;
         }
     }
@@ -327,24 +366,6 @@ public class PaymentBookingActivity extends AppCompatActivity {
             return true;
         }else{
             cardNumberLabel.setTextColor(getResources().getColor(R.color.red));
-            return false;
-        }
-    }
-
-    private boolean validateInputPhoneNumber() {
-        if(clientNumber.getText().toString().length() == 9){
-            return true;
-        }else{
-            clientNumberLabel.setTextColor(getResources().getColor(R.color.red));
-            return false;
-        }
-    }
-
-    private boolean validateInputName() {
-        if(clientName.getText().toString().length() >= 3 && !clientName.getText().toString().equals(" ")){
-            return true;
-        }else{
-            clientNameLabel.setTextColor(getResources().getColor(R.color.red));
             return false;
         }
     }

@@ -36,4 +36,19 @@
     <string name="reserva_realizada">¡ Reserva realizada !</string>
     <string name="thanks_by_wannaeat">Gracias por confiar en</string>
     <string name="mis_cupones">Mis cupones</string>
+    <string name="mis_reservas">Mis reservas</string>
+    <string name="ver_reserva">Ver reserva</string>
+    <string name="anadir_cupon">Añadir cupón</string>
+    <string name="inicia_sesionn">Inicia sesión para ver tus cupones</string>
+    <string name="iniciar_sesion_boton">Iniciar sesión</string>
+    <string name="introduce_codigo_cupon">Introduce código de cupón</string>
+    <string name="est_s_seguro_de_marcharte">¿Estás seguro de marcharte?</string>
+    <string name="si">SI</string>
+    <string name="no">NO</string>
+    <string name="escriba_su_contrase_a">Escriba su contraseña</string>
+    <string name="eliminar_cuenta">Eliminar cuenta</string>
+    <string name="nombre_completo">Nombre completo</string>
+    <string name="nete_a_nosotros">¡ Únete a nosotros !</string>
+    <string name="n_mero_de_tel_fono">Número de teléfono</string>
+    <string name="e_mail">E-mail</string>
 </resources>
