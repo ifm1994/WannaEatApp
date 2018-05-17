@@ -103,36 +103,28 @@ public class SingleBookingMade extends AppCompatActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     private void bindEvents() {
-        productsHeader.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(productsShowing){
-                    productList.setVisibility(View.GONE);
-                    productsHeader.setText("Ver pedido");
-                    productsHeader.setBackgroundColor(getResources().getColor(R.color.orange));
-                    productsShowing = false;
-                }else{
-                    productList.setVisibility(View.VISIBLE);
-                    productsHeader.setText("Ocultar pedido");
-                    productsHeader.setBackgroundColor(getResources().getColor(R.color.blackWithTransparency));
-                    productsShowing = true;
-                }
+        productsHeader.setOnClickListener(v -> {
+            if(productsShowing){
+                productList.setVisibility(View.GONE);
+                productsHeader.setText("Ver pedido");
+                productsHeader.setBackgroundColor(getResources().getColor(R.color.orange));
+                productsShowing = false;
+            }else{
+                productList.setVisibility(View.VISIBLE);
+                productsHeader.setText("Ocultar pedido");
+                productsHeader.setBackgroundColor(getResources().getColor(R.color.blackWithTransparency));
+                productsShowing = true;
             }
         });
 
-        writeOpinionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), WriteOpinionActivity.class);
-                startActivityForResult(intent, 1);
-            }
+        writeOpinionButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), WriteOpinionActivity.class);
+            startActivityForResult(intent, 1);
         });
 
-        sendMessageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
+        sendMessageButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+            startActivityForResult(intent, 1);
         });
     }
 

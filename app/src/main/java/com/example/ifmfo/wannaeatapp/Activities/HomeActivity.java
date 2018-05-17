@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 import com.example.ifmfo.wannaeatapp.R;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -110,6 +111,7 @@ public class HomeActivity extends AppCompatActivity {
                             globalResources.getUserLogged().getUserCoupons().clear();
                             globalResources.getUserLogged().getUserBookings().clear();
                             globalResources.user_logOut();
+                            FirebaseAuth.getInstance().signOut();
                             globalResources.getNavigationView().getMenu().findItem(R.id.log_in_out_button).setTitle("Iniciar sesión");
                             TextView userNameLoggedLabel = globalResources.getNavigationView().getHeaderView(0).findViewById(R.id.user_name_logged);
                             TextView userEmailLoggedLabel= globalResources.getNavigationView().getHeaderView(0).findViewById(R.id.user_email_logged);

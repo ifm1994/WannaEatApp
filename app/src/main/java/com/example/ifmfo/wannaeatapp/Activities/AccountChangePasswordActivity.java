@@ -2,6 +2,7 @@ package com.example.ifmfo.wannaeatapp.Activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +19,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 import com.example.ifmfo.wannaeatapp.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
@@ -91,8 +96,7 @@ public class AccountChangePasswordActivity extends AppCompatActivity {
         String urlPeticion = "https://wannaeatservice.herokuapp.com/api/users/updatepassword/"+ globalResources.getUserLogged().getId() +"/"+ oldPassword.getText() +"/" + newPassword.getText();
         StringRequest stringRequest = new StringRequest(Request.Method.PUT, urlPeticion,
                 response -> {
-                    Snackbar.make(mainLayout ,"Contraseña actualizada",Snackbar.LENGTH_SHORT).show();
-                    finishChangePasswordActivity();
+                    changeUserPasswordFirebase();
                 },
                 error -> {
                     Snackbar.make(mainLayout ,"Error al actualizar la contraseña",Snackbar.LENGTH_SHORT).show();
@@ -101,6 +105,23 @@ public class AccountChangePasswordActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+    }
+
+    private void changeUserPasswordFirebase(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            user.updatePassword(newPassword.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Snackbar.make(mainLayout ,"Contraseña actualizada",Snackbar.LENGTH_SHORT).show();
+                                finishChangePasswordActivity();
+                            }
+                        }
+                    });
+        }
     }
 
     private void finishChangePasswordActivity() {
@@ -140,7 +161,7 @@ public class AccountChangePasswordActivity extends AppCompatActivity {
     }
 
     private boolean validateNewPassword() {
-        if(!newPassword.getText().toString().isEmpty()){
+        if(!newPassword.getText().toString().isEmpty() && newPassword.getText().toString().length() >= 6){
             return true;
         }else{
             newPasswordLabel.setTextColor(getResources().getColor(R.color.red));

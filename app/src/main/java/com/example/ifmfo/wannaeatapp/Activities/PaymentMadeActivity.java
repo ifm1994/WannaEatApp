@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 import com.example.ifmfo.wannaeatapp.R;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
 
@@ -95,6 +96,7 @@ public class PaymentMadeActivity extends AppCompatActivity {
                         globalResources.getUserLogged().getUserCoupons().clear();
                         globalResources.getUserLogged().getUserBookings().clear();
                         globalResources.user_logOut();
+                        FirebaseAuth.getInstance().signOut();
                         TextView userNameLoggedLabel = navView.getHeaderView(0).findViewById(R.id.user_name_logged);
                         TextView userEmailLoggedLabel= navView.getHeaderView(0).findViewById(R.id.user_email_logged);
 

@@ -91,12 +91,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
     private void setupToolbar() {
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null){
-            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeButtonEnabled(true);
-            toolbar.setNavigationIcon(ic_action_orange_back);
-            getSupportActionBar().setTitle("Pedido");
-        }
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        toolbar.setNavigationIcon(ic_action_orange_back);
+        getSupportActionBar().setTitle("Pedido");
     }
 
     @SuppressLint("SetTextI18n")

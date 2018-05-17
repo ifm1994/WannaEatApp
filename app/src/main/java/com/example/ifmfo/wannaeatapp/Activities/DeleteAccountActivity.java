@@ -20,6 +20,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 import com.example.ifmfo.wannaeatapp.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
@@ -36,6 +38,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
     LinearLayout containerTwo;
     EditText password;
     LinearLayout mainLayout;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
         containerTwo = findViewById(R.id.container_2);
         password = findViewById(R.id.password);
         mainLayout = findViewById(R.id.main_layout);
+        mAuth = FirebaseAuth.getInstance();
     }
 
     private void setupToolbar() {
@@ -105,8 +109,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
         String urlPeticion = "https://wannaeatservice.herokuapp.com/api/users/" + globalResources.getUserLogged().getId();
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE, urlPeticion,
                 response -> {
-                    Snackbar.make(mainLayout ,"Cuenta eliminada",Snackbar.LENGTH_SHORT).show();
-                    finishDeleteAccountActivity();
+                    deleteFirebaseUser();
                 },
                 error -> {
                     Snackbar.make(mainLayout ,"Error a la hora de eliminar la cuenta",Snackbar.LENGTH_SHORT).show();
@@ -117,10 +120,24 @@ public class DeleteAccountActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
+    private void deleteFirebaseUser() {
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        if (user != null) {
+            user.delete().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Snackbar.make(mainLayout ,"Cuenta eliminada",Snackbar.LENGTH_SHORT).show();
+                    finishDeleteAccountActivity();
+                }
+            });
+        }
+    }
+
     private void finishDeleteAccountActivity() {
         globalResources.getUserLogged().getUserCoupons().clear();
         globalResources.getUserLogged().getUserBookings().clear();
         globalResources.user_logOut();
+        FirebaseAuth.getInstance().signOut();
         globalResources.getNavigationView().getMenu().findItem(R.id.log_in_out_button).setTitle("Iniciar sesión");
         userNameLoggedLabel.setText("");
         userEmailLoggedLabel.setText("");

@@ -3,13 +3,16 @@ package com.example.ifmfo.wannaeatapp.Activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -18,6 +21,12 @@ import com.android.volley.toolbox.Volley;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 import com.example.ifmfo.wannaeatapp.Model.User;
 import com.example.ifmfo.wannaeatapp.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,10 +36,11 @@ import java.util.regex.Pattern;
 public class RegisterUserActivity extends AppCompatActivity {
 
     CardView registerButton;
-    EditText password, name, phone, email;
+    EditText password, name, phone, email,password2;
     Toolbar toolbar;
     static final GlobalResources globalResources = GlobalResources.getInstance();
     RelativeLayout mainLayout;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +60,8 @@ public class RegisterUserActivity extends AppCompatActivity {
         email = findViewById(R.id.register_email);
         password = findViewById(R.id.register_password);
         mainLayout = findViewById(R.id.main_layout);
+        mAuth = FirebaseAuth.getInstance();
+        password2 = findViewById(R.id.register_password2);
     }
 
     private void setupToolbar() {
@@ -106,7 +118,7 @@ public class RegisterUserActivity extends AppCompatActivity {
     }
 
     private boolean validatePasswordInput() {
-        if(!password.getText().toString().isEmpty()){
+        if(!password.getText().toString().isEmpty() && password.getText().toString().length() >= 6 && password2.getText().toString().equals(password.getText().toString())){
             return true;
         }else{
             password.setTextColor(getResources().getColor(R.color.red));
@@ -144,8 +156,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                 response -> {
                     User user = new User(name.getText().toString(),email.getText().toString(),phone.getText().toString());
                     globalResources.user_logIn(user);
-
-                    startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                    createFirebaseUser();
                 },
                 error -> {
                     Snackbar.make(mainLayout ,"Error a la hora de registrar el usuario",Snackbar.LENGTH_SHORT).show();
@@ -167,6 +178,24 @@ public class RegisterUserActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+    }
+
+    private void createFirebaseUser() {
+
+        mAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Snackbar.make(mainLayout ,"Bienvenido/a a Wannaeat!",Snackbar.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                        } else {
+                            FirebaseAuthException exception = (FirebaseAuthException )task.getException();
+                            // If sign in fails, display a message to the user.
+                        }
+                    }
+                });
     }
 
     @Override

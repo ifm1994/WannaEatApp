@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main_layout"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".Activities.FullShoppingBasketActivity">
+
+    <include layout="@layout/white_toolbar_whith_orange_bottom_bar" />
+
+    <ScrollView
+        android:id="@+id/scroll_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="?android:attr/actionBarSize">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    app:cardCornerRadius="5dp"
+                    app:cardBackgroundColor="@color/cpb_grey">
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    app:cardBackgroundColor="@color/cpb_grey"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    app:cardCornerRadius="5dp">
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    app:cardCornerRadius="5dp"
+                    app:cardBackgroundColor="@color/orange">
+
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:paddingBottom="20dp"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
+                android:paddingTop="10dp"
+                android:gravity="center"
+                android:text="Datos personales y detalles de pago pago"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/booking_complete_name_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="60dp"
+                android:text="Nombre completo"
+                android:textColor="@color/black"
+                android:typeface="normal"
+                android:layout_marginStart="60dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:paddingRight="30dp"
+                android:paddingLeft="20dp"
+                android:layout_height="match_parent"
+                android:paddingEnd="30dp"
+                android:paddingStart="20dp">
+                <ImageView
+                    android:id="@+id/imageView8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    app:srcCompat="@drawable/ic_user_icon" />
+
+                <EditText
+                    android:id="@+id/booking_complete_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="40dp"
+                    android:maxLines="1"
+                    android:layout_marginStart="40dp"
+                    android:background="@drawable/thin_orange_border_bottom"
+                    android:textColor="@color/black" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/booking_contact_phone_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="60dp"
+                android:text="Teléfono de contacto"
+                android:textColor="@color/black"
+                android:typeface="normal"
+                android:layout_marginStart="60dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:paddingRight="30dp"
+                android:paddingLeft="20dp"
+                android:layout_height="match_parent"
+                android:paddingEnd="30dp"
+                android:paddingStart="20dp">
+                <ImageView
+                    android:id="@+id/imageView18"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    app:srcCompat="@drawable/ic_phone_icon" />
+
+                <EditText
+                    android:id="@+id/booking_contact_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginStart="40dp"
+                    android:inputType="phone"
+                    android:maxEms="9"
+                    android:maxLength="9"
+                    android:background="@drawable/thin_orange_border_bottom"
+                    android:textColor="@color/black" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/booking_mail_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="60dp"
+                android:text="Correo electrónico"
+                android:textColor="@color/black"
+                android:typeface="normal"
+                android:layout_marginStart="60dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:paddingRight="30dp"
+                android:paddingLeft="20dp"
+                android:layout_height="match_parent"
+                android:paddingEnd="30dp"
+                android:paddingStart="20dp">
+                <ImageView
+                    android:id="@+id/imageView183"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    app:srcCompat="@drawable/ic_email_icon" />
+
+                <EditText
+                    android:id="@+id/booking_mail"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginStart="40dp"
+                    android:inputType="textEmailAddress"
+                    android:background="@drawable/thin_orange_border_bottom"
+                    android:textColor="@color/black" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="20dp"
+                android:background="@drawable/thin_gray_border_bottom"
+                android:paddingRight="30dp"
+                android:paddingBottom="15dp"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Precio de la reserva: "
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    />
+
+                <TextView
+                    android:id="@+id/booking_final_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:text="16.90€"
+                    android:textStyle="bold
+"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="5dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
+                android:background="@drawable/thin_gray_border_bottom"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Método de pago"
+                    android:textColor="@color/black"
+                    android:layout_centerVertical="true"
+                    android:textSize="16sp"
+                    />
+
+                <Spinner
+                    android:id="@+id/payment_method_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/thin_orange_border_bottom"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/visa_method_container"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:layout_marginBottom="20dp"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/booking_card_name_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Titular de la tarjeta"
+                    android:textColor="@color/black"
+                    android:typeface="normal" />
+
+                <EditText
+                    android:id="@+id/booking_card_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="@drawable/thin_orange_border_bottom"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/booking_card_number_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Número de tarjeta"
+                    android:textColor="@color/black"
+                    android:typeface="normal" />
+
+                <EditText
+                    android:id="@+id/booking_card_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="@drawable/thin_orange_border_bottom"
+                    android:inputType="number"
+                    android:maxEms="16"
+                    android:maxLength="16"
+                    android:textColor="@color/black" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="2"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/booking_card_caducity_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Fecha de caducidad"
+                            android:textColor="@color/black"
+                            android:typeface="normal" />
+
+                        <EditText
+                            android:id="@+id/booking_card_caducity"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:background="@drawable/thin_orange_border_bottom"
+                            android:hint="MM/AA"
+                            android:maxEms="5"
+                            android:maxLength="5"
+                            android:textColor="@color/black" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="20dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/booking_card_cvv_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="CVV"
+                            android:textColor="@color/black"
+                            android:typeface="normal" />
+
+                        <EditText
+                            android:id="@+id/booking_card_cvv"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:background="@drawable/thin_orange_border_bottom"
+                            android:inputType="number"
+                            android:maxEms="3"
+                            android:maxLength="3"
+                            android:textColor="@color/black" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:id="@+id/paypal_method_container"
+                android:visibility="gone"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@android:color/transparent"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/paypal_text"
+                        android:background="@color/gray"
+                        android:padding="15dp"
+                        android:textColor="@color/white"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:text="Cuando presione el boton de pagar reserva, se le redigirirá a la pasarela de pago de paypal"/>
+
+                </android.support.v7.widget.CardView>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:paddingTop="5dp">
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/continueBookingButon"
+                    android:layout_width="300dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    app:cardBackgroundColor="@color/orange"
+                    app:cardCornerRadius="25dp"
+                    app:cardElevation="6dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="Continuar reserva"
+                            android:textColor="@color/white" />
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

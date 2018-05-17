@@ -1,6 +1,7 @@
 package com.example.ifmfo.wannaeatapp.Activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -20,34 +22,50 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 import com.example.ifmfo.wannaeatapp.Model.Restaurant;
+import com.example.ifmfo.wannaeatapp.Model.User;
 import com.example.ifmfo.wannaeatapp.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class LoadingAppActivity extends AppCompatActivity {
 
     private EditText inputDireccion;
     private Boolean direccionAutoCompletada = false;
     static final GlobalResources globalResources = GlobalResources.getInstance();
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_app);
+
+        mAuth = FirebaseAuth.getInstance();
         obtenerTodosLosRestaurantes();
 
         inputDireccion = (EditText) findViewById(R.id.restaurantAddressInput);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
     }
 
@@ -80,16 +98,7 @@ public class LoadingAppActivity extends AppCompatActivity {
                             Restaurant restaurant = new Restaurant(id, name, address, kindOfFood, rating, imagePath, openningHours, description, phone, latitude, longitude);
                             globalResources.addFoundRestaurant(restaurant);
                         }
-
-                        /* Uso de la clase LocationManager para obtener la localización del GPS */
-                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            //Si no tengo los permisos necesarios los solicito
-                            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-                        } else {
-                            //Si tengo los permisos, pues consigo la ubicacion actual
-                            locationStart();
-                        }
-
+                        checkIfLoggedIn();
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
@@ -99,6 +108,51 @@ public class LoadingAppActivity extends AppCompatActivity {
                 }
         );
         requestQueue.add(jsonObjectRequest);
+    }
+
+    private void checkIfLoggedIn(){
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            String urlPeticion = "https://wannaeatservice.herokuapp.com/api/user/email/" + currentUser.getEmail();
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                    Request.Method.GET,
+                    urlPeticion,
+                    null,
+                    response -> {
+                        try {
+                            int id = response.getInt("id");
+                            String name = response.getString("name");
+                            String email = response.getString("email");
+                            String phone = response.getString("phone");
+                            User user = new User(name, email, phone);
+                            user.setId(id);
+                            globalResources.user_logIn(user);
+                            detectLocation();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    },
+                    error -> {
+
+                    }
+            );
+            requestQueue.add(jsonObjectRequest);
+        }else{
+            detectLocation();
+        }
+    }
+
+    private void detectLocation(){
+        /* Uso de la clase LocationManager para obtener la localización del GPS */
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //Si no tengo los permisos necesarios los solicito
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
+        } else {
+            //Si tengo los permisos, pues consigo la ubicacion actual
+            locationStart();
+        }
     }
 
     private void locationStart() {

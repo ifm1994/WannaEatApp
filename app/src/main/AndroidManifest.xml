@@ -47,7 +47,6 @@
             android:name=".Activities.HomeActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activities.RestaurantsActivity"
             android:configChanges="orientation"
@@ -151,8 +150,11 @@
         <activity
             android:name=".Activities.RegisterUserActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
+        <activity android:name=".Activities.ChatActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            />
     </application>
 
 </manifest>

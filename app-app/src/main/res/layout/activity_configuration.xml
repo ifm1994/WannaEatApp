@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".Activities.ProductsPerCategoryActivity">
+
+    <include layout="@layout/white_toolbar_whith_orange_bottom_bar" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="?android:attr/actionBarSize"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="20dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:id="@+id/user_configuration_container"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:paddingRight="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="5dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:background="@drawable/thin_orange_border_bottom"
+                    android:text="Detalles de la cuenta"
+                    />
+
+                <Button
+                    android:id="@+id/accountInfoButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:paddingRight="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="15dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:textAllCaps="false"
+                    android:textAlignment="textStart"
+                    android:background="@drawable/thin_gray_border_bottom"
+                    android:gravity="start"
+                    android:text="Información de la cuenta"/>
+
+                <Button
+                    android:id="@+id/changePasswordButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:paddingRight="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="15dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:textAllCaps="false"
+                    android:textAlignment="textStart"
+                    android:background="@drawable/thin_gray_border_bottom"
+                    android:gravity="start"
+                    android:text="Cambiar contraseña"
+                    />
+
+                <Button
+                    android:id="@+id/removeAcountButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:paddingRight="10dp"
+                    android:paddingLeft="10dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:textAllCaps="false"
+                    android:textAlignment="textStart"
+                    android:background="@drawable/thin_gray_border_bottom"
+                    android:gravity="start"
+                    android:layout_marginBottom="40dp"
+                    android:text="Eliminar cuenta"
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:paddingBottom="5dp"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:background="@drawable/thin_orange_border_bottom"
+                android:text="Condiciones legales"
+                />
+
+            <Button
+                android:id="@+id/temsButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:paddingBottom="15dp"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:textAllCaps="false"
+                android:textAlignment="textStart"
+                android:background="@drawable/thin_gray_border_bottom"
+                android:gravity="start"
+                android:text="Términos y condiciones"
+                />
+
+            <Button
+                android:id="@+id/privacityButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:paddingBottom="15dp"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:textAllCaps="false"
+                android:textAlignment="textStart"
+                android:background="@drawable/thin_gray_border_bottom"
+                android:gravity="start"
+                android:text="Politica de privacidad"
+                />
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+
+</RelativeLayout>

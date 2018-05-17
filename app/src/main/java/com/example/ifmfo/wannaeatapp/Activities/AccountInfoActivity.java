@@ -2,11 +2,13 @@ package com.example.ifmfo.wannaeatapp.Activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -18,6 +20,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 import com.example.ifmfo.wannaeatapp.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -110,8 +116,7 @@ public class AccountInfoActivity extends AppCompatActivity {
                     globalResources.getUserLogged().setPhone(phone.getText().toString());
                     userNameLoggedLabel.setText(globalResources.getUserLogged().getName());
                     userEmailLoggedLabel.setText(globalResources.getUserLogged().getEmail());
-
-                    finishUpdateAccountInfoActivity();
+                    updateFirebaseUser();
                 },
                 error -> {
                     Snackbar.make(mainLayout ,"Error al actualizar la información de la cuenta",Snackbar.LENGTH_SHORT).show();
@@ -132,6 +137,17 @@ public class AccountInfoActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+    }
+
+    private void updateFirebaseUser(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            user.updateEmail(email.getText().toString()).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    finishUpdateAccountInfoActivity();
+                }
+            });
+        }
     }
 
     private void finishUpdateAccountInfoActivity() {

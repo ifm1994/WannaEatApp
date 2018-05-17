@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">WannaEatApp</string>
+    <!--Pantalla home-->
+    <string name="complete_address_label">Introduce su dirección completa</string>
+    <string name="logo_description">logo de wannaeat</string>
+    <string name="menu_icon_description">icono de menú</string>
+    <string name="input_with_rounded_border">Corner Round</string>
+    <string name="search_restaurants_label">Buscar restaurantes</string>
+    <string name="title_activity_find_restaurant">Map</string>
+    <string name="posicion_actual">Mi posición actual</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="restaurant_image_description">image of restaurant</string>
+    <string name="order_toolbar_option_desc">Ordenar restaurantes</string>
+    <string name="type_food_toolbar_option_desc">Tipo de comida</string>
+    <string name="title_activity_restaurant">RestaurantActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="advertencia_hora_de_reserva">Las horas disponibles siempre dependerá de la disponibilidad del restaurante. Como hora deseada tiene que haber una diferencia de 1 hora con la hora actual. Disculpenos si no se encuentra su hora exacta deseada.</string>
+    <string name="reserva_realizada">¡ Reserva realizada !</string>
+    <string name="thanks_by_wannaeat">Gracias por confiar en</string>
+    <string name="mis_cupones">Mis cupones</string>
+    <string name="mis_reservas">Mis reservas</string>
+    <string name="ver_reserva">Ver reserva</string>
+    <string name="anadir_cupon">Añadir cupón</string>
+    <string name="inicia_sesionn">Inicia sesión para ver tus cupones</string>
+    <string name="iniciar_sesion_boton">Iniciar sesión</string>
+    <string name="introduce_codigo_cupon">Introduce código de cupón</string>
+    <string name="est_s_seguro_de_marcharte">¿Estás seguro de marcharte?</string>
+    <string name="si">SI</string>
+    <string name="no">NO</string>
+    <string name="escriba_su_contrase_a">Escriba su contraseña</string>
+    <string name="eliminar_cuenta">Eliminar cuenta</string>
+    <string name="nombre_completo">Nombre completo</string>
+    <string name="nete_a_nosotros">¡ Únete a nosotros !</string>
+    <string name="n_mero_de_tel_fono">Número de teléfono</string>
+    <string name="e_mail">E-mail</string>
+</resources>

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "309295803715",
+    "firebase_url": "https://wannaeat-91fad.firebaseio.com",
+    "project_id": "wannaeat-91fad",
+    "storage_bucket": "wannaeat-91fad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309295803715:android:249cc0199c6e7e55",
+        "android_client_info": {
+          "package_name": "com.example.ifmfo.wannaeatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "309295803715-s5itic1m3q0ntc1f77jpttl1lmff200v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ifmfo.wannaeatapp",
+            "certificate_hash": "f151e7f66f2d6cbf157242ae8a02430785ad6485"
+          }
+        },
+        {
+          "client_id": "309295803715-6en7ttipt8jsh6tf7qaraid65nkr7ptm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_G9N5sYxs2-VnzmolJxW9B1-tNQmXYIM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "309295803715-6en7ttipt8jsh6tf7qaraid65nkr7ptm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
