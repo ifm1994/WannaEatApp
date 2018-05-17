@@ -8,6 +8,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -46,8 +47,9 @@ public class MyBookingsActivity extends AppCompatActivity {
         initUI();
         setupToolbar();
         bindEvents();
-
         if(globalResources.getUser_isLogged()){
+            Log.i("info.","usuario " + globalResources.getUserLogged().getName());
+
             if(globalResources.getUserLogged().getUserBookings().size() != 0){
                 rellenarContainerDeReservas(globalResources.getUserLogged().getUserBookings());
                 showItsNecesary();

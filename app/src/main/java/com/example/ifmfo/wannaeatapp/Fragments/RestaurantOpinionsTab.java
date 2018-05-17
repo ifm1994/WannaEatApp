@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +40,6 @@ public class RestaurantOpinionsTab extends Fragment {
     Restaurant thisRestaurant;
     View fragmentView;
     TextView restaurantRatingView;
-    Double totalRestaurantRating;
     TextView amountOfOpinionsView;
     RecyclerView opinionsContainer;
     public static List<Opinion> allOpinions = new ArrayList<>();
@@ -64,6 +64,7 @@ public class RestaurantOpinionsTab extends Fragment {
         restaurantRatingView = fragmentView.findViewById(R.id.single_restaurant_rating);
         amountOfOpinionsView = fragmentView.findViewById(R.id.single_restaurant_number_of_opinions);
         mainLayout = fragmentView.findViewById(R.id.main_layout);
+        restaurantRatingView.setText("0");
     }
 
     private void obtenerOpinionesDelRestaurante() {
@@ -93,9 +94,9 @@ public class RestaurantOpinionsTab extends Fragment {
                             Opinion opinion = new Opinion(id, idRestaurant, idUser, writerName, rating, description, finalDate);
                             allOpinions.add(opinion);
                         }
-                        calculateTotalRating();
                         dibujarListaDeOpiniones();
-                        restaurantRatingView.setText(String.format("%.2f",totalRestaurantRating));
+                        Log.i("RestaurantRating","Rating" + thisRestaurant.getRating());
+                        restaurantRatingView.setText(thisRestaurant.getRating());
                         amountOfOpinionsView.setText(Integer.toString(allOpinions.size()));
 
                     }catch (JSONException e){
@@ -110,18 +111,6 @@ public class RestaurantOpinionsTab extends Fragment {
         requestQueue.add(jsonObjectRequest);
 
 
-    }
-
-    private void calculateTotalRating() {
-        Double result = 0.0;
-        if(allOpinions.size() != 0){
-            for(Opinion opinion : allOpinions){
-                result += opinion.getRating();
-            }
-            totalRestaurantRating = result/allOpinions.size();
-        }else{
-            totalRestaurantRating = result;
-        }
     }
 
     private void dibujarListaDeOpiniones() {

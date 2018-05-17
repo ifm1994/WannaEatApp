@@ -30,7 +30,6 @@
                 android:id="@+id/restaurant_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_gravity="bottom"
                 android:background="#8c000000"
@@ -38,7 +37,7 @@
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                tools:ignore="ObsoleteLayoutParam" />
+                android:layout_alignParentLeft="true" />
 
         </FrameLayout>
 

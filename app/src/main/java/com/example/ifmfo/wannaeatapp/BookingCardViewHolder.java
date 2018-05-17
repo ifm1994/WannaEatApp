@@ -17,12 +17,10 @@ public class BookingCardViewHolder extends RecyclerView.ViewHolder {
     TextView bookingTime;
     public View view;
     public Booking currentBooking;
-    private Context context;
-    Button goToSingleBooking;
+    private Button goToSingleBooking;
 
     public BookingCardViewHolder(View itemView, Context context) {
         super(itemView);
-        this.context = context;
         view = itemView;
 
         bookingRestaurantName = itemView.findViewById(R.id.booking_restaurant_name);

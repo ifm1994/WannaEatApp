@@ -282,6 +282,14 @@ public class GlobalResources extends Application{
         getFoundRestaurnts().clear();
     }
 
+    public void updateRatingOfRestaurant(Restaurant restaurant, String rating){
+        for(Restaurant res: getFoundRestaurnts()){
+            if(res.getId() == restaurant.getId()){
+                res.setRating(rating);
+            }
+        }
+    }
+
     //Capacidades por hora de restaurante
 
     public List<CommensalPerHour> getCapacitiesOfRestaurant(){
@@ -372,7 +380,7 @@ public class GlobalResources extends Application{
         this.last_single_booking_visited = last_single_booking_visited;
     }
 
-    public void updateStateKeepLogged(int id_booking) {
+    public void changeStatusOfBooking(int id_booking) {
         for(Booking booking: getUserLogged().getUserBookings()){
             if(booking.getId() == id_booking){
                 booking.setCanrate(false);

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -119,6 +120,7 @@ public class SingleBookingMade extends AppCompatActivity {
 
         writeOpinionButton.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), WriteOpinionActivity.class);
+            intent.putExtra("restaurant", thisRestaurant);
             startActivityForResult(intent, 1);
         });
 
@@ -155,7 +157,7 @@ public class SingleBookingMade extends AppCompatActivity {
     }
 
     public void getRestaurantOfThisBooking() {
-        RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.getContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(SingleBookingMade.this);
         String urlPeticion = "https://wannaeatservice.herokuapp.com/api/restaurants/" + thisBooking.getId_restaurant();
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(

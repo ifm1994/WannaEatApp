@@ -36,7 +36,6 @@
                 android:background="#8c000000"
                 android:padding="8dp"
                 android:textColor="@color/white"
-                android:textAllCaps="true"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 tools:ignore="ObsoleteLayoutParam" />

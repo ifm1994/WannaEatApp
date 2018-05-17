@@ -74,5 +74,43 @@ public class Restaurant implements Serializable{
         return longitude;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setKind_of_food(String kind_of_food) {
+        this.kind_of_food = kind_of_food;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public void setImage_path(String image_path) {
+        this.image_path = image_path;
+    }
+
+    public void setOpening_hours(String opening_hours) {
+        this.opening_hours = opening_hours;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
 }

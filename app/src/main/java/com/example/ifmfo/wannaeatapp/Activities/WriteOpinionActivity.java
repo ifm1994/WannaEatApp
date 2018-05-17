@@ -7,17 +7,20 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
+import com.example.ifmfo.wannaeatapp.Model.Restaurant;
 import com.example.ifmfo.wannaeatapp.R;
 
 import java.util.HashMap;
@@ -37,12 +40,15 @@ public class WriteOpinionActivity extends AppCompatActivity {
     TextView opinionCommentary;
     TextView opinionCommentaryLabel;
     RelativeLayout mainLayout;
+    Restaurant thisRestaurant;
     static final GlobalResources globalResources = GlobalResources.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_opinion);
+
+        thisRestaurant = (Restaurant) getIntent().getSerializableExtra("restaurant");
 
         initUI();
         setupToolbar();
@@ -125,15 +131,31 @@ public class WriteOpinionActivity extends AppCompatActivity {
         });
     }
 
+    public void updateBooking(){
+        globalResources.changeStatusOfBooking(globalResources.getLast_single_booking_visited().getId());
+        String urlPeticion = "https://wannaeatservice.herokuapp.com/api/bookings/canrate/" + globalResources.getLast_single_booking_visited().getId() + "/false";
+        StringRequest stringRequest = new StringRequest(Request.Method.PUT, urlPeticion,
+                response -> {
+                    registerOpinion();
+                    globalResources.getLast_single_booking_visited().setCanrate(false);
+                },
+                error -> {
+                    Snackbar.make(mainLayout ,"Error al actualizar la reserva",Snackbar.LENGTH_SHORT).show();
+                }){
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+
     public void registerOpinion(){
         String urlPeticion = "https://wannaeatservice.herokuapp.com/api/opinions";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlPeticion,
                 response -> {
-                    Snackbar.make(mainLayout ,"Reseña registrada",Snackbar.LENGTH_SHORT).show();
-                    finishWriteOpinionActivity();
+                    updateRestaurantGlobalRating();
                 },
                 error -> {
-                    Snackbar.make(mainLayout ,"Error al registrar su reseña",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(mainLayout ,"Error al registrar su reseña" + error.toString(),Snackbar.LENGTH_SHORT).show();
                 }){
 
             @SuppressLint("SetTextI18n")
@@ -155,16 +177,24 @@ public class WriteOpinionActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
-    public void updateBooking(){
-        globalResources.updateStateKeepLogged(globalResources.getLast_single_booking_visited().getId());
-        String urlPeticion = "https://wannaeatservice.herokuapp.com/api/bookings/canrate/" + globalResources.getLast_single_booking_visited().getId() + "/false";
-        StringRequest stringRequest = new StringRequest(Request.Method.PUT, urlPeticion,
+    @SuppressLint("DefaultLocale")
+    private void updateRestaurantGlobalRating() {
+        @SuppressLint("DefaultLocale") String newRating = String.format("%.2f", (inputRating + Double.parseDouble(thisRestaurant.getRating()) / 2));
+        newRating = newRating.replace(",",".");
+        String urlPeticion = "https://wannaeatservice.herokuapp.com/api/restaurants/rating/" + thisRestaurant.getId() + "/" + newRating;
+        String finalNewRating = newRating;
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.PUT,
+                urlPeticion,
                 response -> {
-                    registerOpinion();
-                    globalResources.getLast_single_booking_visited().setCanrate(false);
+                    Snackbar.make(mainLayout ,"Reseña registrada",Snackbar.LENGTH_SHORT).show();
+
+                    globalResources.updateRatingOfRestaurant(thisRestaurant, finalNewRating);
+
+                    finishWriteOpinionActivity();
                 },
                 error -> {
-                    Snackbar.make(mainLayout ,"Error al actualizar la reserva",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(mainLayout , error.toString(),Snackbar.LENGTH_SHORT).show();
                 }){
         };
 

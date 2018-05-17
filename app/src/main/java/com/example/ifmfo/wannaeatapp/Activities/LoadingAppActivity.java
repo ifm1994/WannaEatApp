@@ -46,7 +46,6 @@ import java.util.Map;
 
 public class LoadingAppActivity extends AppCompatActivity {
 
-    private EditText inputDireccion;
     private Boolean direccionAutoCompletada = false;
     static final GlobalResources globalResources = GlobalResources.getInstance();
     private FirebaseAuth mAuth;
@@ -57,15 +56,8 @@ public class LoadingAppActivity extends AppCompatActivity {
         setContentView(R.layout.activity_loading_app);
 
         mAuth = FirebaseAuth.getInstance();
+
         obtenerTodosLosRestaurantes();
-
-        inputDireccion = (EditText) findViewById(R.id.restaurantAddressInput);
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
     }
 
@@ -111,6 +103,7 @@ public class LoadingAppActivity extends AppCompatActivity {
     }
 
     private void checkIfLoggedIn(){
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -254,7 +247,6 @@ public class LoadingAppActivity extends AppCompatActivity {
                     Address DirCalle = list.get(0);
                     if(!direccionAutoCompletada){
                         direccionAutoCompletada = true;
-
                         Intent homeIntent = new Intent(LoadingAppActivity.this, HomeActivity.class);
                         globalResources.setSession_currentAddress(DirCalle.getAddressLine(0));
 
