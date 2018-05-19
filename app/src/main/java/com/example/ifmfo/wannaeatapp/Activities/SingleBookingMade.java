@@ -126,6 +126,8 @@ public class SingleBookingMade extends AppCompatActivity {
 
         sendMessageButton.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+            intent.putExtra("restaurant", thisRestaurant);
+            intent.putExtra("comingFrom", "client");
             startActivityForResult(intent, 1);
         });
     }
@@ -178,8 +180,9 @@ public class SingleBookingMade extends AppCompatActivity {
                         String phone = response.getString("phone");
                         double latitude = Double.parseDouble(response.getString("latitude"));
                         double longitude = Double.parseDouble(response.getString("longitude"));
+                        int idAdmin = response.getInt("id_admin");
 
-                        thisRestaurant = new Restaurant(id, name, address, kindOfFood, rating, imagePath, openningHours, description, phone, latitude, longitude);
+                        thisRestaurant = new Restaurant(id, name, address, kindOfFood, rating, imagePath, openningHours, description, phone, latitude, longitude, idAdmin);
 
                         restaurantName.setText(thisRestaurant.getName());
                         Picasso.get()

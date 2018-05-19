@@ -95,7 +95,6 @@ public class RestaurantOpinionsTab extends Fragment {
                             allOpinions.add(opinion);
                         }
                         dibujarListaDeOpiniones();
-                        Log.i("RestaurantRating","Rating" + thisRestaurant.getRating());
                         restaurantRatingView.setText(thisRestaurant.getRating());
                         amountOfOpinionsView.setText(Integer.toString(allOpinions.size()));
 

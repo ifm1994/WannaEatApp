@@ -140,8 +140,9 @@ public class RestaurantsActivity extends AppCompatActivity{
                                 String phone = restaurantObject.getString("phone");
                                 double latitude = Double.parseDouble(restaurantObject.getString("latitude"));
                                 double longitude = Double.parseDouble(restaurantObject.getString("longitude"));
+                                int idAdmin = restaurantObject.getInt("id_admin");
 
-                                Restaurant restaurant = new Restaurant(id, name, address, kindOfFood, rating, imagePath, openningHours, description, phone, latitude, longitude);
+                                Restaurant restaurant = new Restaurant(id, name, address, kindOfFood, rating, imagePath, openningHours, description, phone, latitude, longitude, idAdmin);
                                 globalResources.addFoundRestaurant(restaurant);
                             }
                             filtrarRestaurantesCercanos(globalResources.getFoundRestaurnts(), filterSelected);

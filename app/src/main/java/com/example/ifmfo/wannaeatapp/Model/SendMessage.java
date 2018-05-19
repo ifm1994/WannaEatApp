@@ -15,7 +15,7 @@ public class SendMessage extends ChatMessage {
     }
 
     public SendMessage(String messageText, String messageUser, Map time) {
-        super(messageText, messageUser);
+        super(messageText, messageUser, 1);
         this.time = time;
     }
 

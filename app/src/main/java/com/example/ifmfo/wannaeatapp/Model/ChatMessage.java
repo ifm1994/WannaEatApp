@@ -6,14 +6,18 @@ public class ChatMessage {
 
     private String messageText;
     private String messageUser;
+    private int tipoMensaje; //1 para mensajes que envío, y 2 para los que recibo
 
-    public ChatMessage(String messageText, String messageUser) {
+    public ChatMessage(String messageText, String messageUser, int tipoMensaje) {
         this.messageText = messageText;
         this.messageUser = messageUser;
+        this.tipoMensaje = tipoMensaje;
     }
 
-    public ChatMessage() {
+    public ChatMessage() {}
 
+    public int getTipoMensaje() {
+        return tipoMensaje;
     }
 
     public String getMessageText() {

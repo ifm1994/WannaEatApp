@@ -1,5 +1,6 @@
 package com.example.ifmfo.wannaeatapp;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -9,6 +10,7 @@ public class ChatMessageCardViewHolder extends RecyclerView.ViewHolder {
     private TextView name;
     private TextView message;
     private TextView time;
+    CardView cardContainer;
 
     public ChatMessageCardViewHolder(View itemView) {
         super(itemView);
@@ -16,6 +18,7 @@ public class ChatMessageCardViewHolder extends RecyclerView.ViewHolder {
         name = itemView.findViewById(R.id.name);
         message = itemView.findViewById(R.id.message);
         time = itemView.findViewById(R.id.time);
+        cardContainer = itemView.findViewById(R.id.message_card_container);
 
     }
 

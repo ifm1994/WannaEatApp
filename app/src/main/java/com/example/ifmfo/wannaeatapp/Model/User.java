@@ -1,9 +1,10 @@
 package com.example.ifmfo.wannaeatapp.Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User {
+public class User implements Serializable{
 
     private int id;
     private String name;
@@ -11,14 +12,26 @@ public class User {
     private String phone;
     private List<Coupon> userCoupons;
     private List<Booking> userBookings;
+    private String firebaseToken;
 
     public User(String name, String email, String phone) {
-        this.id = id;
         this.name = name;
         this.email = email;
         this.phone = phone;
         userCoupons = new ArrayList<>();
         userBookings = new ArrayList<>();
+    }
+
+    public User(String email){
+        this.email = email;
+    }
+
+    public String getFirebaseToken() {
+        return firebaseToken;
+    }
+
+    public void setFirebaseToken(String firebaseToken) {
+        this.firebaseToken = firebaseToken;
     }
 
     public int getId() {

@@ -13,7 +13,7 @@ public class ReceiveMessage extends ChatMessage {
     }
 
     public ReceiveMessage(String messageText, String messageUser, Long time) {
-        super(messageText, messageUser);
+        super(messageText, messageUser, 2);
         this.time = time;
     }
 

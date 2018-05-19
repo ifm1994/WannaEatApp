@@ -42,6 +42,12 @@ public class ChatMessageCardAdapter extends RecyclerView.Adapter<ChatMessageCard
         holder.getName().setText(messagesList.get(position).getMessageUser());
         holder.getMessage().setText(messagesList.get(position).getMessageText());
 
+        if(messagesList.get(position).getTipoMensaje() == 1){
+            holder.cardContainer.setCardBackgroundColor(context.getResources().getColor(R.color.light_gray));
+        }else if(messagesList.get(position).getTipoMensaje() == 2){
+            holder.cardContainer.setCardBackgroundColor(context.getResources().getColor(R.color.white));
+        }
+
         Long timeCode = messagesList.get(position).getTime();
         Date date = new Date(timeCode);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yy h:mm"); //a pm o am

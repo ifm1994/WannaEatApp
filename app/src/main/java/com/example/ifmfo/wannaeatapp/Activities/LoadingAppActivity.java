@@ -1,10 +1,10 @@
 package com.example.ifmfo.wannaeatapp.Activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -13,21 +13,18 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.provider.Settings;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.ifmfo.wannaeatapp.Model.AdminUser;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
 import com.example.ifmfo.wannaeatapp.Model.Restaurant;
 import com.example.ifmfo.wannaeatapp.Model.User;
@@ -39,10 +36,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class LoadingAppActivity extends AppCompatActivity {
 
@@ -86,8 +81,9 @@ public class LoadingAppActivity extends AppCompatActivity {
                             String phone = restaurantObject.getString("phone");
                             double latitude = Double.parseDouble(restaurantObject.getString("latitude"));
                             double longitude = Double.parseDouble(restaurantObject.getString("longitude"));
+                            int idAdmin = restaurantObject.getInt("id_admin");
 
-                            Restaurant restaurant = new Restaurant(id, name, address, kindOfFood, rating, imagePath, openningHours, description, phone, latitude, longitude);
+                            Restaurant restaurant = new Restaurant(id, name, address, kindOfFood, rating, imagePath, openningHours, description, phone, latitude, longitude,idAdmin);
                             globalResources.addFoundRestaurant(restaurant);
                         }
                         checkIfLoggedIn();
@@ -106,33 +102,74 @@ public class LoadingAppActivity extends AppCompatActivity {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
+
+            SharedPreferences prefs = getSharedPreferences("MyPreferences",Context.MODE_PRIVATE);
+            String user = prefs.getString("type_of_user", "unknown");
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String urlPeticion = "https://wannaeatservice.herokuapp.com/api/user/email/" + currentUser.getEmail();
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                    Request.Method.GET,
-                    urlPeticion,
-                    null,
-                    response -> {
-                        try {
-                            int id = response.getInt("id");
-                            String name = response.getString("name");
-                            String email = response.getString("email");
-                            String phone = response.getString("phone");
-                            User user = new User(name, email, phone);
-                            user.setId(id);
-                            globalResources.user_logIn(user);
-                            detectLocation();
+            String urlPeticion;
+            String currentUserEmail = currentUser.getEmail();
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+            if(user.equals("client")){
+                globalResources.setSetClientViewOfApp(true);
+            }else if(user.equals("admin")){
+                globalResources.setSetClientViewOfApp(false);
+            }
+
+            if(user.equals("client")){
+                urlPeticion = "https://wannaeatservice.herokuapp.com/api/user/email/" + currentUserEmail;
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                        Request.Method.GET,
+                        urlPeticion,
+                        null,
+                        response -> {
+                            try {
+                                int id = response.getInt("id");
+                                String name = response.getString("name");
+                                String email = response.getString("email");
+                                String phone = response.getString("phone");
+                                User client = new User(name, email, phone);
+                                client.setId(id);
+                                globalResources.user_logIn(client);
+                                detectLocation();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        },
+                        error -> {
+
                         }
-                    },
-                    error -> {
+                );
+                requestQueue.add(jsonObjectRequest);
+            }else if(user.equals("admin")){
+                urlPeticion = "https://wannaeatservice.herokuapp.com/api/admin_user/email/" + currentUserEmail;
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                        Request.Method.GET,
+                        urlPeticion,
+                        null,
+                        response -> {
+                            try {
+                                int id = response.getInt("id");
+                                String email = response.getString("email");
+                                Boolean hasRestaurant = Boolean.parseBoolean(response.getString("hasRestaurant"));
+                                AdminUser admin = new AdminUser(email, hasRestaurant);
+                                admin.setId(id);
 
-                    }
-            );
-            requestQueue.add(jsonObjectRequest);
+                                globalResources.user_logIn(admin);
+                                detectLocation();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        },
+                        error -> {
+
+                        }
+                );
+                requestQueue.add(jsonObjectRequest);
+            }
         }else{
+            globalResources.setSetClientViewOfApp(true);
             detectLocation();
         }
     }

@@ -91,6 +91,8 @@
             android:id="@+id/type_user_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:thumbTint="@color/orange"
+            android:trackTint="@color/white"
             android:layout_weight="1" />
 
         <TextView

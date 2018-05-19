@@ -15,8 +15,9 @@ public class Restaurant implements Serializable{
     private String phone;
     private double latitude;
     private double longitude;
+    private int idAdmin;
 
-    public Restaurant(int id,String name, String address, String kind_of_food, String rating, String image_path, String opening_hours, String description, String phone, double latitude, double longitude) {
+    public Restaurant(int id,String name, String address, String kind_of_food, String rating, String image_path, String opening_hours, String description, String phone, double latitude, double longitude, int idAdmin) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -28,6 +29,7 @@ public class Restaurant implements Serializable{
         this.phone = phone;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.idAdmin = idAdmin;
     }
 
     public int getId() {
@@ -36,6 +38,10 @@ public class Restaurant implements Serializable{
 
     public String getName() {
         return name;
+    }
+
+    public int getIdAdmin() {
+        return idAdmin;
     }
 
     public String getAddress() {

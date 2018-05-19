@@ -50,6 +50,7 @@ public class MyCouponsActicity extends AppCompatActivity {
         bindEvents();
 
         if(globalResources.getUser_isLogged()){
+            zeroCouponsContainer.setVisibility(View.VISIBLE);
             obtenerCuponesDelUsuario();
         }
     }
@@ -87,6 +88,7 @@ public class MyCouponsActicity extends AppCompatActivity {
     public void showItIfIsNecesary(){
         redeemCouponContainer.setVisibility(View.VISIBLE);
         if( globalResources.getUserLogged().getUserCoupons().size() != 0){
+            zeroCouponsContainer.setVisibility(View.GONE);
             couponCardsContainer.setVisibility(View.VISIBLE);
         }else{
             zeroCouponsContainer.setVisibility(View.VISIBLE);

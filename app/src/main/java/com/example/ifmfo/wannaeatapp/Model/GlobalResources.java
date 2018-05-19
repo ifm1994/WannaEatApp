@@ -2,7 +2,7 @@ package com.example.ifmfo.wannaeatapp.Model;
 
 import android.app.Application;
 import android.support.design.widget.NavigationView;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.example.ifmfo.wannaeatapp.Activities.FullShoppingBasketActivity;
 
@@ -36,6 +36,7 @@ public class GlobalResources extends Application{
     private int number_of_commensals;
     private String client_commentary;
     private Booking last_single_booking_visited;
+    private boolean setClientViewOfApp;
 
     public GlobalResources() {
         shopping_basket_numberOfProductsAdded = 0;
@@ -47,6 +48,14 @@ public class GlobalResources extends Application{
         foundRestaurnts = new ArrayList<>();
         capacitiesPerHourOfRestaurant = new ArrayList<>();
         isBookingForToday = true;
+    }
+
+    public boolean getSetClientViewOfApp() {
+        return setClientViewOfApp;
+    }
+
+    public void setSetClientViewOfApp(boolean setClientViewOfApp) {
+        this.setClientViewOfApp = setClientViewOfApp;
     }
 
     public static synchronized GlobalResources getInstance(){
@@ -275,7 +284,13 @@ public class GlobalResources extends Application{
     }
 
     public String getNameOfThisRestaurant(int id_restaurant){
-        return getFoundRestaurnts().get(id_restaurant - 1).getName();
+        for(Restaurant restaurant: getFoundRestaurnts()){
+            if(restaurant.getId() == id_restaurant){
+                Log.d("DEBUG",restaurant.getName());
+                return restaurant.getName();
+            }
+        }
+        return "";
     }
 
     public void clearFoundRestaurants(){
