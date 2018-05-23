@@ -1,7 +1,12 @@
 package com.example.ifmfo.wannaeatapp.Activities;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -20,9 +25,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
+import com.example.ifmfo.wannaeatapp.Model.Restaurant;
 import com.example.ifmfo.wannaeatapp.R;
+import com.example.ifmfo.wannaeatapp.SearchFilter;
 import com.google.firebase.auth.FirebaseAuth;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import pl.droidsonroids.gif.GifImageView;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -39,6 +59,9 @@ public class HomeActivity extends AppCompatActivity {
     TextView restaurantAddressInput;
     TextView loginLabel;
     TextView textSearchButton;
+    GifImageView loadingGif;
+    Boolean isLoading;
+    Geocoder geocoder;
 
     @TargetApi(Build.VERSION_CODES.O)
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -69,6 +92,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void initUI() {
+        geocoder = new Geocoder(this);
         globalResources.setNavigationView(findViewById(R.id.navview));
         inputDireccion = findViewById(R.id.restaurantAddressInput);
         searchRestaurantsButton = findViewById(R.id.searchRestaurantButton);
@@ -79,6 +103,8 @@ public class HomeActivity extends AppCompatActivity {
         restaurantAddressInput = findViewById(R.id.RestaurantAddressLabel);
         loginLabel = findViewById(R.id.login_label);
         textSearchButton = findViewById(R.id.text_search_button);
+        loadingGif = findViewById(R.id.loading_gif);
+        isLoading = false;
 
         inputDireccion.setText(globalResources.getSession_currentAddress());
         inputDireccion.setSelection(inputDireccion.getText().length());
@@ -125,57 +151,142 @@ public class HomeActivity extends AppCompatActivity {
             });
         }else{
             searchRestaurantsButton.setOnClickListener(arg0 -> {
-                if(inputDireccion.getText().length() != 0){
-                    Intent intent = new Intent(HomeActivity.this, RestaurantsActivity.class);
-                    intent.putExtra("direccion", inputDireccion.getText().toString());
-                    startActivityForResult(intent, 1);
+                if(!isLoading){
+                    isLoading = true;
+                    if(inputDireccion.getText().length() != 0){
+                        loadingGif.setVisibility(View.VISIBLE);
+                        textSearchButton.setVisibility(View.GONE);
+                        globalResources.setSession_addressEntered(inputDireccion.getText().toString());
+                        try {
+                            obtenerTodosLosRestaurantes();
+                        } catch (IOException e) {
+                            Snackbar.make(mainHomeLayout ,"La dirección no ha sido encontrada",Snackbar.LENGTH_SHORT).show();
+                            isLoading = false;
+                        }
+                    }else{
+                        Snackbar.make(mainHomeLayout ,"Debe rellenar una dirección",Snackbar.LENGTH_LONG).show();
+                        isLoading = false;
+                    }
                 }else{
-                    Snackbar.make(mainHomeLayout ,"Debe rellenar una dirección",Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(mainHomeLayout ,"Tenga paciencia",Snackbar.LENGTH_SHORT).show();
                 }
             });
         }
 
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-                switch (menuItem.getItemId()) {
-                    case R.id.bookings_section_button:
-                        startActivityForResult(new Intent(HomeActivity.this, MyBookingsActivity.class), 1);
-                        break;
-                    case R.id.coupons_section_button:
-                        startActivityForResult(new Intent(HomeActivity.this, MyCouponsActicity.class), 1);
-                        break;
-                    case R.id.configuration_button:
-                        startActivityForResult(new Intent(HomeActivity.this, ConfigurationActivity.class), 1);
-                        break;
-                    case R.id.log_in_out_button:
-                        if(globalResources.getUser_isLogged()){
-                            if(globalResources.getUserLogged().getUserCoupons() != null){
-                                globalResources.getUserLogged().getUserCoupons().clear();
-                                globalResources.getUserLogged().getUserBookings().clear();
-                            }
-                            globalResources.user_logOut();
-                            FirebaseAuth.getInstance().signOut();
-                            globalResources.getNavigationView().getMenu().findItem(R.id.log_in_out_button).setTitle("Iniciar sesión");
-                            TextView userNameLoggedLabel = globalResources.getNavigationView().getHeaderView(0).findViewById(R.id.user_name_logged);
-                            TextView userEmailLoggedLabel= globalResources.getNavigationView().getHeaderView(0).findViewById(R.id.user_email_logged);
-                            Snackbar.make(mainHomeLayout ,"Hasta pronto " + userNameLoggedLabel.getText().toString() + "!",Snackbar.LENGTH_LONG).show();
-                            userNameLoggedLabel.setText("");
-                            userEmailLoggedLabel.setText("");
-                        }else{
-                            Intent goLoginActivity = new Intent(getApplicationContext(), LoginActivity.class);
-                            goLoginActivity.putExtra("NavigationCode","sinceHome");
-                            startActivityForResult(goLoginActivity, 1);
+        navView.setNavigationItemSelectedListener(menuItem -> {
+
+            switch (menuItem.getItemId()) {
+                case R.id.bookings_section_button:
+                    startActivityForResult(new Intent(HomeActivity.this, MyBookingsActivity.class), 1);
+                    break;
+                case R.id.coupons_section_button:
+                    startActivityForResult(new Intent(HomeActivity.this, MyCouponsActicity.class), 1);
+                    break;
+                case R.id.configuration_button:
+                    startActivityForResult(new Intent(HomeActivity.this, ConfigurationActivity.class), 1);
+                    break;
+                case R.id.log_in_out_button:
+                    if(globalResources.getUser_isLogged()){
+                        if(globalResources.getUserLogged().getUserCoupons() != null){
+                            globalResources.getUserLogged().getUserCoupons().clear();
+                            globalResources.getUserLogged().getUserBookings().clear();
                         }
-                        break;
-                }
-                menuItem.setChecked(true);
-                drawerLayout.closeDrawers();
-
-                return true;
+                        globalResources.user_logOut();
+                        FirebaseAuth.getInstance().signOut();
+                        globalResources.getNavigationView().getMenu().findItem(R.id.log_in_out_button).setTitle("Iniciar sesión");
+                        TextView userNameLoggedLabel = globalResources.getNavigationView().getHeaderView(0).findViewById(R.id.user_name_logged);
+                        TextView userEmailLoggedLabel= globalResources.getNavigationView().getHeaderView(0).findViewById(R.id.user_email_logged);
+                        Snackbar.make(mainHomeLayout ,"Hasta pronto " + userNameLoggedLabel.getText().toString() + "!",Snackbar.LENGTH_LONG).show();
+                        userNameLoggedLabel.setText("");
+                        userEmailLoggedLabel.setText("");
+                    }else{
+                        Intent goLoginActivity = new Intent(getApplicationContext(), LoginActivity.class);
+                        goLoginActivity.putExtra("NavigationCode","sinceHome");
+                        startActivityForResult(goLoginActivity, 1);
+                    }
+                    break;
             }
+            menuItem.setChecked(true);
+            drawerLayout.closeDrawers();
+
+            return true;
         });
+    }
+
+
+    @SuppressLint("StaticFieldLeak")
+    private void obtenerTodosLosRestaurantes() throws IOException {
+        if(globalResources.getFoundRestaurnts().size() == 0){
+            globalResources.clearFoundRestaurants();
+            new AsyncTask<Void,Void,Boolean>(){
+                @Override
+                protected Boolean doInBackground(Void... voids) {
+                    RequestQueue requestQueue = Volley.newRequestQueue(HomeActivity.this);
+                    String urlPeticion = "https://wannaeatservice.herokuapp.com/api/restaurants";
+                    JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+                            Request.Method.GET,
+                            urlPeticion,
+                            null,
+                            response -> {
+                                try{
+                                    // Loop through the array elements
+                                    for(int i=0;i<response.length();i++){
+                                        // Get current json object
+                                        JSONObject restaurantObject = response.getJSONObject(i);
+                                        // Get the current restaurant (json object) data
+                                        int id = restaurantObject.getInt("id");
+                                        String name = restaurantObject.getString("name");
+                                        String address = restaurantObject.getString("address");
+                                        String kindOfFood = restaurantObject.getString("kind_of_food");
+                                        String rating = restaurantObject.getString("rating");
+                                        String imagePath = restaurantObject.getString("image_path");
+                                        String openningHours = restaurantObject.getString("opening_hours");
+                                        String description = restaurantObject.getString("description");
+                                        String phone = restaurantObject.getString("phone");
+                                        double latitude = Double.parseDouble(restaurantObject.getString("latitude"));
+                                        double longitude = Double.parseDouble(restaurantObject.getString("longitude"));
+                                        int idAdmin = restaurantObject.getInt("id_admin");
+
+                                        Restaurant restaurant = new Restaurant(id, name, address, kindOfFood, rating, imagePath, openningHours, description, phone, latitude, longitude, idAdmin);
+                                        globalResources.addFoundRestaurant(restaurant);
+                                    }
+
+                                    goToRestaurantsActivity();
+
+                                }catch (JSONException e){
+                                    e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            },
+                            error -> {
+                                // Do something when error occurred
+                                Snackbar.make(mainHomeLayout ,"Error en la petición de restaurantes",Snackbar.LENGTH_SHORT).show();
+                            }
+                    );
+                    requestQueue.add(jsonObjectRequest);
+                    return true;
+                }
+            };
+
+        }else{
+            goToRestaurantsActivity();
+        }
+    }
+
+    private void goToRestaurantsActivity() throws IOException {
+
+        List<Address> address = geocoder.getFromLocationName(globalResources.getSession_addressEntered(), 1);
+        String localityAddress = address.get(0).getLocality();
+
+        Intent intent = new Intent(HomeActivity.this, RestaurantsActivity.class);
+        intent.putExtra("locality", localityAddress);
+
+        loadingGif.setVisibility(View.GONE);
+        textSearchButton.setVisibility(View.VISIBLE);
+        isLoading = false;
+        startActivityForResult(intent, 1);
     }
 
     @Override

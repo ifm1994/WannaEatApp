@@ -27,6 +27,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,7 +83,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                 phone.setTextColor(getResources().getColor(R.color.white));
                 email.setTextColor(getResources().getColor(R.color.white));
                 password.setTextColor(getResources().getColor(R.color.white));
-                registerUser();
+                createFirebaseUser();
             }
         });
 
@@ -150,13 +151,32 @@ public class RegisterUserActivity extends AppCompatActivity {
         return patron.matcher(fecha).matches();
     }
 
-    private void registerUser() {
+    private void createFirebaseUser() {
+
+        mAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            registerUser(FirebaseInstanceId.getInstance().getToken());
+                        } else {
+                            FirebaseAuthException exception = (FirebaseAuthException )task.getException();
+                            // If sign in fails, display a message to the user.
+                        }
+                    }
+                });
+    }
+
+    private void registerUser(String ftoken) {
         String urlPeticion = "https://wannaeatservice.herokuapp.com/api/users";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlPeticion,
                 response -> {
                     User user = new User(name.getText().toString(),email.getText().toString(),phone.getText().toString());
+                    user.setFirebaseToken(ftoken);
                     globalResources.user_logIn(user);
-                    createFirebaseUser();
+                    Snackbar.make(mainLayout ,"Bienvenido/a a Wannaeat!",Snackbar.LENGTH_SHORT).show();
+                    startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                 },
                 error -> {
                     Snackbar.make(mainLayout ,"Error a la hora de registrar el usuario",Snackbar.LENGTH_SHORT).show();
@@ -171,7 +191,6 @@ public class RegisterUserActivity extends AppCompatActivity {
                 params.put("phone", "" + phone.getText());
                 params.put("email", "" + email.getText());
                 params.put("password", "" + password.getText());
-
                 return params;
             }
         };
@@ -180,23 +199,7 @@ public class RegisterUserActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
-    private void createFirebaseUser() {
 
-        mAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Snackbar.make(mainLayout ,"Bienvenido/a a Wannaeat!",Snackbar.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                        } else {
-                            FirebaseAuthException exception = (FirebaseAuthException )task.getException();
-                            // If sign in fails, display a message to the user.
-                        }
-                    }
-                });
-    }
 
     @Override
     public void onBackPressed() {

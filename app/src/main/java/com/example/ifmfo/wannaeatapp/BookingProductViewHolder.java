@@ -47,7 +47,6 @@ public class BookingProductViewHolder extends  RecyclerView.ViewHolder{
             globalResources.shopping_basket_addProduct(currentProduct);
 
             FullShoppingBasketActivity.dibujarProductosDeLaReserva();
-
             FullShoppingBasketActivity.actualizarPrecioTotal();
         });
 
@@ -60,6 +59,7 @@ public class BookingProductViewHolder extends  RecyclerView.ViewHolder{
                 FullShoppingBasketActivity.actualizarPrecioTotal();
                 view.getContext().startActivity(goEmpty);
             }else{
+                FullShoppingBasketActivity.actualizarPrecioTotal();
                 FullShoppingBasketActivity.dibujarProductosDeLaReserva();
             }
         });

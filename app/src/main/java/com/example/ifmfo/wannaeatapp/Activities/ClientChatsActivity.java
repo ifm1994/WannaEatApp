@@ -47,7 +47,7 @@ public class ClientChatsActivity extends AppCompatActivity {
 
         initUI();
         setupToolbar();
-        bindEvets();
+        bindEvents();
 
         obtenerReservas();
     }
@@ -60,7 +60,7 @@ public class ClientChatsActivity extends AppCompatActivity {
         clientsChatCardContainer = findViewById(R.id.clients_chat_card_container);
     }
 
-    private void bindEvets() {
+    private void bindEvents() {
 
     }
 
@@ -120,14 +120,9 @@ public class ClientChatsActivity extends AppCompatActivity {
     }
 
     private void getUsersOfBookings(){
-        Boolean isLast = false;
         for(int i = 0; i < allBookingsOfRestaurant.size(); i++ ){
-            if(i == allBookingsOfRestaurant.size() -1){
-                isLast = true;
-            }
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             String urlPeticion = "https://wannaeatservice.herokuapp.com/api/users/" + allBookingsOfRestaurant.get(i).getId_user();
-            Boolean finalIsLast = isLast;
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     Request.Method.GET,
                     urlPeticion,
@@ -145,7 +140,7 @@ public class ClientChatsActivity extends AppCompatActivity {
                             user.setId(id);
                             user.setFirebaseToken(ftoken);
                             allUsersOfBookings.add(user);
-                            if(finalIsLast){
+                            if( allUsersOfBookings.size() == allBookingsOfRestaurant.size()){
                                 drawListOfChats();
                             }
 
@@ -163,6 +158,7 @@ public class ClientChatsActivity extends AppCompatActivity {
     }
 
     private void drawListOfChats() {
+        Log.d("DEBUG",allBookingsOfRestaurant.size() + " - " + allUsersOfBookings.size() );
         LinearLayoutManager layout = new LinearLayoutManager(getApplicationContext());
         layout.setOrientation(LinearLayoutManager.VERTICAL);
         clientsChatCardContainer.setHasFixedSize(true);

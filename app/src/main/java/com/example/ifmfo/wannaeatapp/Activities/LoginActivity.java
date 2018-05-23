@@ -135,8 +135,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public Boolean regularExpressionValidator(String stringPatron, String textToValidate){
         Pattern patron = Pattern.compile(stringPatron);
-        String fecha = textToValidate.trim();
-        return patron.matcher(fecha).matches();
+        String textTrimmed = textToValidate.trim();
+        return patron.matcher(textTrimmed).matches();
     }
 
     private void LoginFirebaseUser() {

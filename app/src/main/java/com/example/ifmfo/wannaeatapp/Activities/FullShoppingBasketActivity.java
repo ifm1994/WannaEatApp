@@ -281,7 +281,7 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
     }
 
     public static void removeCouponApplied(){
-        globalResources.setShopping_basket_totalPrice_with_discount(null);
+        globalResources.setShopping_basket_totalPrice_with_discount(0.0);
         discontedProductLabel.setText("");
         discontedPriceLabel.setText("");
         globalResources.setCouponApplied(null);

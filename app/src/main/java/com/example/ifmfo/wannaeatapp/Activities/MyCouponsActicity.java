@@ -99,7 +99,7 @@ public class MyCouponsActicity extends AppCompatActivity {
         List<Coupon> allCouponsOfUser = new ArrayList<>();
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         String urlPeticion = "https://wannaeatservice.herokuapp.com/api/coupons/user/" + globalResources.getUserLogged().getId();
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 urlPeticion,
                 null,
@@ -134,7 +134,7 @@ public class MyCouponsActicity extends AppCompatActivity {
                     Snackbar.make(mainLayout ,"Error en la petición de cupones",Snackbar.LENGTH_SHORT).show();
                 }
         );
-        requestQueue.add(jsonObjectRequest);
+        requestQueue.add(jsonArrayRequest);
     }
 
     private void rellenarContainerDeCuponer(List <Coupon> cuponsOfThisUser) {
