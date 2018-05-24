@@ -71,7 +71,7 @@
                 android:paddingLeft="20dp"
                 android:paddingTop="10dp"
                 android:gravity="center"
-                android:text="Datos personales y detalles de pago pago"
+                android:text="Datos personales y detalles de pago"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
