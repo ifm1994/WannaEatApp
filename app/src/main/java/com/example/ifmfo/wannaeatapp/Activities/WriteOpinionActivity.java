@@ -17,11 +17,16 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ifmfo.wannaeatapp.Model.GlobalResources;
+import com.example.ifmfo.wannaeatapp.Model.Opinion;
 import com.example.ifmfo.wannaeatapp.Model.Restaurant;
 import com.example.ifmfo.wannaeatapp.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +45,7 @@ public class WriteOpinionActivity extends AppCompatActivity {
     TextView opinionCommentary;
     TextView opinionCommentaryLabel;
     RelativeLayout mainLayout;
+    int numberOfOpinions;
     Restaurant thisRestaurant;
     static final GlobalResources globalResources = GlobalResources.getInstance();
 
@@ -152,7 +158,7 @@ public class WriteOpinionActivity extends AppCompatActivity {
         String urlPeticion = "https://wannaeatservice.herokuapp.com/api/opinions";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlPeticion,
                 response -> {
-                    updateRestaurantGlobalRating();
+                    getNumberOfOpinions();
                 },
                 error -> {
                     Snackbar.make(mainLayout ,"Error al registrar su reseña" + error.toString(),Snackbar.LENGTH_SHORT).show();
@@ -177,9 +183,28 @@ public class WriteOpinionActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
+    private void getNumberOfOpinions(){
+        RequestQueue requestQueue = Volley.newRequestQueue(WriteOpinionActivity.this);
+        String urlPeticion = "https://wannaeatservice.herokuapp.com/api/opinions/restaurant/" + thisRestaurant.getId();
+        @SuppressLint({"SetTextI18n", "DefaultLocale"}) JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                urlPeticion,
+                null,
+                response -> {
+                    numberOfOpinions = response.length();
+                    updateRestaurantGlobalRating();
+                },
+                error -> {
+                    // Do something when error occurred
+                    RestaurantActivity.showMessage("Error en la petición de productos del restaurante, vuelva a intentarlo. Disculpe las molestias");
+                }
+        );
+        requestQueue.add(jsonObjectRequest);
+    }
+
     @SuppressLint("DefaultLocale")
     private void updateRestaurantGlobalRating() {
-        @SuppressLint("DefaultLocale") String newRating = String.format("%.2f", (inputRating + Double.parseDouble(thisRestaurant.getRating()) / 2));
+        @SuppressLint("DefaultLocale") String newRating = String.format("%.2f", ((inputRating + Double.parseDouble(thisRestaurant.getRating())) / numberOfOpinions));
         newRating = newRating.replace(",",".");
         String urlPeticion = "https://wannaeatservice.herokuapp.com/api/restaurants/rating/" + thisRestaurant.getId() + "/" + newRating;
         String finalNewRating = newRating;
@@ -240,6 +265,7 @@ public class WriteOpinionActivity extends AppCompatActivity {
 
     private void drawStars(int stars) {
         valued = true;
+        inputRating = stars;
         switch (stars){
             case 1:
                 star1.setImageResource(R.drawable.ic_action_star_filled);
@@ -247,7 +273,6 @@ public class WriteOpinionActivity extends AppCompatActivity {
                 star3.setImageResource(R.drawable.ic_action_star_empty);
                 star4.setImageResource(R.drawable.ic_action_star_empty);
                 star5.setImageResource(R.drawable.ic_action_star_empty);
-                inputRating = 1;
                 break;
             case 2:
                 star1.setImageResource(R.drawable.ic_action_star_filled);
@@ -255,7 +280,6 @@ public class WriteOpinionActivity extends AppCompatActivity {
                 star3.setImageResource(R.drawable.ic_action_star_empty);
                 star4.setImageResource(R.drawable.ic_action_star_empty);
                 star5.setImageResource(R.drawable.ic_action_star_empty);
-                inputRating = 2;
                 break;
             case 3:
                 star1.setImageResource(R.drawable.ic_action_star_filled);
@@ -263,7 +287,6 @@ public class WriteOpinionActivity extends AppCompatActivity {
                 star3.setImageResource(R.drawable.ic_action_star_filled);
                 star4.setImageResource(R.drawable.ic_action_star_empty);
                 star5.setImageResource(R.drawable.ic_action_star_empty);
-                inputRating = 3;
                 break;
             case 4:
                 star1.setImageResource(R.drawable.ic_action_star_filled);
@@ -271,7 +294,6 @@ public class WriteOpinionActivity extends AppCompatActivity {
                 star3.setImageResource(R.drawable.ic_action_star_filled);
                 star4.setImageResource(R.drawable.ic_action_star_filled);
                 star5.setImageResource(R.drawable.ic_action_star_empty);
-                inputRating = 4;
                 break;
             case 5:
                 star1.setImageResource(R.drawable.ic_action_star_filled);
@@ -279,7 +301,6 @@ public class WriteOpinionActivity extends AppCompatActivity {
                 star3.setImageResource(R.drawable.ic_action_star_filled);
                 star4.setImageResource(R.drawable.ic_action_star_filled);
                 star5.setImageResource(R.drawable.ic_action_star_filled);
-                inputRating = 5;
                 break;
         }
     }

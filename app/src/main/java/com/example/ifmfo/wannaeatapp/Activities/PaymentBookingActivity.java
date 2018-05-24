@@ -291,6 +291,7 @@ public class PaymentBookingActivity extends AppCompatActivity {
     }
 
     public void finishBookingPayment(){
+        globalResources.shopping_basket_emptyShoppingCart();
         Intent intent = new Intent(getApplicationContext(), PaymentMadeActivity.class);
         startActivityForResult(intent, 1);
     }

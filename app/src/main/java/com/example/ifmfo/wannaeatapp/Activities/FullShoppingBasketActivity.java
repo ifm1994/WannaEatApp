@@ -343,7 +343,7 @@ public class FullShoppingBasketActivity extends AppCompatActivity {
                 setResult(RESULT_OK, intent);
                 finish();
                 break;
-            case R.id.fill_basket_option:
+            case R.id.empty_basket_option:
                 globalResources.shopping_basket_emptyShoppingCart();
                 Intent goEmpty = new Intent( context, EmptyShoppingBasketActivity.class );
                 goEmpty.putExtra("restaurant", RestaurantActivity.getCurrentRestaurant());

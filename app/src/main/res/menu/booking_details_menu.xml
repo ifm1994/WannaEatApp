@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/fill_basket_option"
+        android:id="@+id/empty_basket_option"
         android:icon="@drawable/ic_trash_icon"
         android:title="empty_shopping_cart"
         app:showAsAction="ifRoom" />
